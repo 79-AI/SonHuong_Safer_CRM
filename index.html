@@ -301,6 +301,51 @@
   .photo-info { padding:12px 14px; }
   .photo-info .pname { font-size:13px; font-weight:600; line-height:1.4; margin-bottom:6px; }
   .photo-info .ptags { display:flex; gap:5px; flex-wrap:wrap; }
+
+  /* ── TEAM KPI ── */
+  .kpi-staff-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:20px; }
+  @media(max-width:900px){ .kpi-staff-grid{ grid-template-columns:repeat(2,1fr); } }
+  @media(max-width:480px){ .kpi-staff-grid{ grid-template-columns:1fr 1fr; } }
+  .staff-card { background:white; border:2px solid var(--border); border-radius:14px; padding:18px 16px; text-align:center; cursor:pointer; transition:all .2s; }
+  .staff-card:hover { box-shadow:0 6px 20px rgba(0,0,0,.1); transform:translateY(-2px); }
+  .staff-card.selected { border-color:var(--staff-color); box-shadow:0 0 0 3px var(--staff-color-light); }
+  .staff-avatar { font-size:36px; margin-bottom:6px; }
+  .staff-name { font-size:15px; font-weight:700; margin-bottom:4px; }
+  .kpi-score-big { font-size:36px; font-weight:800; line-height:1; }
+  .kpi-grade { display:inline-block; padding:3px 10px; border-radius:20px; font-size:12px; font-weight:700; margin-top:4px; }
+  .grade-A { background:#F0FFF4; color:#22543D; } .grade-B { background:#EBF8FF; color:#2B6CB0; }
+  .grade-C { background:#FFFAF0; color:#C05621; } .grade-D { background:#FFF5F5; color:#C53030; }
+  .kpi-bar-wrap { margin:8px 0 4px; }
+  .kpi-bar { height:8px; background:#F0F4F8; border-radius:4px; overflow:hidden; margin-bottom:2px; }
+  .kpi-bar-fill { height:100%; border-radius:4px; transition:width .6s; }
+  .metric-row { display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--border); font-size:13px; }
+  .metric-row:last-child { border-bottom:none; }
+  .metric-label { color:var(--text-muted); }
+  .metric-val { font-weight:700; }
+  .metric-pct { font-size:11px; font-weight:600; padding:2px 6px; border-radius:10px; }
+  .pct-good { background:#F0FFF4; color:#276749; } .pct-mid { background:#FFFAF0; color:#C05621; } .pct-low { background:#FFF5F5; color:#C53030; }
+  .leaderboard-row { display:flex; align-items:center; gap:12px; padding:10px 14px; border-radius:10px; margin-bottom:6px; border:1px solid var(--border); background:white; transition:background .15s; }
+  .leaderboard-row:hover { background:#FAFBFC; }
+  .lb-rank { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; flex-shrink:0; }
+  .lb-rank-1 { background:#FFD700; color:#7A5800; } .lb-rank-2 { background:#C0C0C0; color:#505050; }
+  .lb-rank-3 { background:#CD7F32; color:white; } .lb-rank-n { background:#F0F4F8; color:#718096; }
+
+  /* ── GLOBAL SEARCH ── */
+  .gsearch-overlay { position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:9999; display:flex; align-items:flex-start; justify-content:center; padding-top:80px; backdrop-filter:blur(3px); }
+  .gsearch-box { background:white; border-radius:16px; width:600px; max-width:92vw; box-shadow:0 24px 80px rgba(0,0,0,.25); overflow:hidden; }
+  .gsearch-input-wrap { display:flex; align-items:center; gap:10px; padding:14px 18px; border-bottom:1px solid var(--border); }
+  .gsearch-input { flex:1; font-size:16px; border:none; outline:none; color:var(--text); background:transparent; }
+  .gsearch-results { max-height:440px; overflow-y:auto; }
+  .gsearch-group { padding:8px 0 4px; }
+  .gsearch-group-label { padding:6px 18px; font-size:10px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:.5px; }
+  .gsearch-item { display:flex; align-items:center; gap:12px; padding:10px 18px; cursor:pointer; transition:background .1s; }
+  .gsearch-item:hover, .gsearch-item.focused { background:#F7FAFC; }
+  .gsearch-item-icon { font-size:18px; width:32px; text-align:center; flex-shrink:0; }
+  .gsearch-item-main { flex:1; min-width:0; }
+  .gsearch-item-title { font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .gsearch-item-sub { font-size:11px; color:var(--text-muted); margin-top:1px; }
+  .gsearch-empty { text-align:center; padding:32px 20px; color:var(--text-muted); font-size:14px; }
+  .gsearch-footer { padding:8px 18px; border-top:1px solid var(--border); display:flex; gap:14px; font-size:11px; color:var(--text-muted); }
 </style>
 </head>
 <body>
@@ -318,6 +363,7 @@
       <div class="nav-item" onclick="navigate('channels')" id="nav-channels"><span class="icon">📡</span> Báo cáo kênh</div>
       <div class="nav-item" onclick="navigate('refill')" id="nav-refill"><span class="icon">🔔</span> Nhắc Refill <span id="refill-badge" style="margin-left:auto;background:#E74C3C;color:white;font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px;display:none">0</span></div>
       <div style="padding:8px 16px 4px;font-size:10px;font-weight:700;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.5px;margin-top:8px">Hỗ trợ team</div>
+      <div class="nav-item" onclick="navigate('team')" id="nav-team"><span class="icon">👥</span> Team KPI</div>
       <div class="nav-item" onclick="navigate('knowledge')" id="nav-knowledge"><span class="icon">📚</span> Kiến thức SP</div>
       <div class="nav-item" onclick="navigate('photos')" id="nav-photos"><span class="icon">🖼️</span> Photo Library</div>
       <div class="nav-item" onclick="navigate('settings')" id="nav-settings"><span class="icon">⚙️</span> Cài đặt</div>
@@ -335,6 +381,9 @@
         <h2 id="page-title">Dashboard</h2>
       </div>
       <div class="topbar-right">
+        <button class="btn btn-outline btn-sm" onclick="openGlobalSearch()" style="gap:6px;color:var(--text-muted)" title="Tìm kiếm (⌘K)">
+          🔍 <span style="display:none" id="search-hint">⌘K</span>
+        </button>
         <span id="topbar-date" style="color:var(--text-muted);font-size:12px;"></span>
         <button class="btn btn-primary" id="topbar-cta" onclick="topbarAction()">
           <span>➕</span> <span id="topbar-cta-label">Thêm khách hàng</span>
@@ -382,6 +431,9 @@ const ORDER_STATUSES = ['Lead','Quoted','Confirmed','Paid','Đóng gói','Đang 
 const PIPELINE_STEPS = ['Confirmed','Paid','Đóng gói','Đang giao','Đã giao thành công','Hoàn thành'];
 const PIPELINE_LABELS = {'Confirmed':'✅ Xác nhận','Paid':'💳 Đã TT','Đóng gói':'📦 Đóng gói','Đang giao':'🚚 Đang giao','Đã giao thành công':'🏠 Đã giao','Hoàn thành':'🎉 Xong'};
 const CH_COLORS = { SHOPEE:'#EE4D2D',LAZADA:'#9B59B6',TIKTOK:'#00C851',FACEBOOK:'#3B5998',ALIBABA:'#FF6A00',YOUTUBE:'#FF0000',EMAIL:'#95A5A6',ZALO:'#0068FF' };
+const STAFF = ['Hải','Âu','Lộc','Tài'];
+const STAFF_COLORS = { 'Hải':'#3B82F6','Âu':'#8B5CF6','Lộc':'#10B981','Tài':'#F59E0B' };
+const STAFF_AVATARS = { 'Hải':'🌊','Âu':'🦅','Lộc':'🦌','Tài':'⭐' };
 
 // ============================================================
 // DATA LAYER
@@ -397,30 +449,30 @@ function genId(prefix) {
 function seedData() {
   if (loadData('customers').length > 0) return;
   const customers = [
-    { id:'CUS-2026-0001', name:'Nguyễn Thị Mai', phone:'0901234567', email:'mai.nguyen@gmail.com', type:'Cá nhân', province:'TP. Hồ Chí Minh', segment:'Elderly Care', channel:'SHOPEE', assignee:'Sang', status:'VIP', note:'Mua đều đặn mỗi tháng', createdAt:'2026-04-10', totalSpent:2850000 },
-    { id:'CUS-2026-0002', name:'Trần Văn Hùng', phone:'0912345678', email:'', type:'Cá nhân', province:'Hà Nội', segment:'First Aid', channel:'TIKTOK', assignee:'Sang', status:'Active', note:'Quan tâm túi xe hơi', createdAt:'2026-05-02', totalSpent:450000 },
-    { id:'CUS-2026-0003', name:'Công ty TNHH Minh Phú', phone:'0283456789', email:'minhphu@corp.vn', type:'Doanh nghiệp', province:'TP. Hồ Chí Minh', segment:'First Aid', channel:'ALIBABA', assignee:'Sang', status:'Active', note:'Đặt bulk hàng tháng', createdAt:'2026-04-20', totalSpent:12500000 },
-    { id:'CUS-2026-0004', name:'Lê Thị Hoa', phone:'0934567890', email:'', type:'Cá nhân', province:'Đà Nẵng', segment:'Elderly Care', channel:'FACEBOOK', assignee:'', status:'Lead', note:'Hỏi về máy đo huyết áp', createdAt:'2026-06-15', totalSpent:0 },
-    { id:'CUS-2026-0005', name:'Phạm Minh Tuấn', phone:'0945678901', email:'tuan.pm@yahoo.com', type:'Cá nhân', province:'TP. Hồ Chí Minh', segment:'Elderly Care', channel:'ZALO', assignee:'Sang', status:'Active', note:'', createdAt:'2026-05-28', totalSpent:680000 },
-    { id:'CUS-2026-0006', name:'Bệnh viện Quận 7', phone:'0283456000', email:'bvq7@hospital.vn', type:'Doanh nghiệp', province:'TP. Hồ Chí Minh', segment:'First Aid', channel:'EMAIL', assignee:'Sang', status:'VIP', note:'Hợp đồng cung ứng 6 tháng', createdAt:'2026-03-01', totalSpent:45000000 },
-    { id:'CUS-2026-0007', name:'Hoàng Văn Nam', phone:'0956789012', email:'', type:'Cá nhân', province:'Hà Nội', segment:'Elderly Care', channel:'SHOPEE', assignee:'', status:'Inactive', note:'Chưa mua lại từ tháng 3', createdAt:'2026-02-14', totalSpent:320000 },
-    { id:'CUS-2026-0008', name:'Trường Mầm non Ánh Sao', phone:'0287654321', email:'anhsao@school.vn', type:'Doanh nghiệp', province:'Bình Dương', segment:'First Aid', channel:'LAZADA', assignee:'Sang', status:'Active', note:'', createdAt:'2026-06-01', totalSpent:1800000 },
-    { id:'CUS-2026-0009', name:'Nguyễn Thị Lan Anh', phone:'0971234567', email:'lananh@gmail.com', type:'Cá nhân', province:'Cần Thơ', segment:'Elderly Care', channel:'FACEBOOK', assignee:'', status:'Active', note:'', createdAt:'2026-05-10', totalSpent:560000 },
-    { id:'CUS-2026-0010', name:'Công ty CP An Toàn Việt', phone:'0248765432', email:'safety@antoanviet.vn', type:'Doanh nghiệp', province:'Hà Nội', segment:'First Aid', channel:'EMAIL', assignee:'Sang', status:'Active', note:'Mua túi PCCC số lượng lớn', createdAt:'2026-05-15', totalSpent:8400000 },
+    { id:'CUS-2026-0001', name:'Nguyễn Thị Mai', phone:'0901234567', email:'mai.nguyen@gmail.com', type:'Cá nhân', province:'TP. Hồ Chí Minh', segment:'Elderly Care', channel:'SHOPEE', assignee:'Hải', status:'VIP', note:'Mua đều đặn mỗi tháng', createdAt:'2026-04-10', totalSpent:2850000 },
+    { id:'CUS-2026-0002', name:'Trần Văn Hùng', phone:'0912345678', email:'', type:'Cá nhân', province:'Hà Nội', segment:'First Aid', channel:'TIKTOK', assignee:'Âu', status:'Active', note:'Quan tâm túi xe hơi', createdAt:'2026-05-02', totalSpent:450000 },
+    { id:'CUS-2026-0003', name:'Công ty TNHH Minh Phú', phone:'0283456789', email:'minhphu@corp.vn', type:'Doanh nghiệp', province:'TP. Hồ Chí Minh', segment:'First Aid', channel:'ALIBABA', assignee:'Lộc', status:'Active', note:'Đặt bulk hàng tháng', createdAt:'2026-04-20', totalSpent:12500000 },
+    { id:'CUS-2026-0004', name:'Lê Thị Hoa', phone:'0934567890', email:'', type:'Cá nhân', province:'Đà Nẵng', segment:'Elderly Care', channel:'FACEBOOK', assignee:'Tài', status:'Lead', note:'Hỏi về máy đo huyết áp', createdAt:'2026-06-15', totalSpent:0 },
+    { id:'CUS-2026-0005', name:'Phạm Minh Tuấn', phone:'0945678901', email:'tuan.pm@yahoo.com', type:'Cá nhân', province:'TP. Hồ Chí Minh', segment:'Elderly Care', channel:'ZALO', assignee:'Hải', status:'Active', note:'', createdAt:'2026-05-28', totalSpent:680000 },
+    { id:'CUS-2026-0006', name:'Bệnh viện Quận 7', phone:'0283456000', email:'bvq7@hospital.vn', type:'Doanh nghiệp', province:'TP. Hồ Chí Minh', segment:'First Aid', channel:'EMAIL', assignee:'Lộc', status:'VIP', note:'Hợp đồng cung ứng 6 tháng', createdAt:'2026-03-01', totalSpent:45000000 },
+    { id:'CUS-2026-0007', name:'Hoàng Văn Nam', phone:'0956789012', email:'', type:'Cá nhân', province:'Hà Nội', segment:'Elderly Care', channel:'SHOPEE', assignee:'Âu', status:'Inactive', note:'Chưa mua lại từ tháng 3', createdAt:'2026-02-14', totalSpent:320000 },
+    { id:'CUS-2026-0008', name:'Trường Mầm non Ánh Sao', phone:'0287654321', email:'anhsao@school.vn', type:'Doanh nghiệp', province:'Bình Dương', segment:'First Aid', channel:'LAZADA', assignee:'Tài', status:'Active', note:'', createdAt:'2026-06-01', totalSpent:1800000 },
+    { id:'CUS-2026-0009', name:'Nguyễn Thị Lan Anh', phone:'0971234567', email:'lananh@gmail.com', type:'Cá nhân', province:'Cần Thơ', segment:'Elderly Care', channel:'FACEBOOK', assignee:'Âu', status:'Active', note:'', createdAt:'2026-05-10', totalSpent:560000 },
+    { id:'CUS-2026-0010', name:'Công ty CP An Toàn Việt', phone:'0248765432', email:'safety@antoanviet.vn', type:'Doanh nghiệp', province:'Hà Nội', segment:'First Aid', channel:'EMAIL', assignee:'Lộc', status:'Active', note:'Mua túi PCCC số lượng lớn', createdAt:'2026-05-15', totalSpent:8400000 },
   ];
   const orders = [
-    { id:'ORD-2026-0001', customerId:'CUS-2026-0001', customerName:'Nguyễn Thị Mai', channel:'SHOPEE', productCode:'SA-EC-001', productName:'Máy đo huyết áp bắp tay', quantity:1, price:850000, total:850000, status:'Completed', orderDate:'2026-06-10', note:'' },
-    { id:'ORD-2026-0002', customerId:'CUS-2026-0003', customerName:'Công ty TNHH Minh Phú', channel:'ALIBABA', productCode:'SA-FA-002', productName:'Túi sơ cứu văn phòng / doanh nghiệp', quantity:20, price:320000, total:6400000, status:'Completed', orderDate:'2026-06-05', note:'Giao tại kho quận 9' },
-    { id:'ORD-2026-0003', customerId:'CUS-2026-0002', customerName:'Trần Văn Hùng', channel:'TIKTOK', productCode:'SA-FA-003', productName:'Túi sơ cứu xe hơi / phương tiện', quantity:1, price:450000, total:450000, status:'Shipped', orderDate:'2026-06-18', note:'' },
-    { id:'ORD-2026-0004', customerId:'CUS-2026-0006', customerName:'Bệnh viện Quận 7', channel:'EMAIL', productCode:'SA-FA-006', productName:'Túi sơ cứu tiêu chuẩn PCCC / ISO', quantity:10, price:680000, total:6800000, status:'Paid', orderDate:'2026-06-14', note:'Cần hoá đơn VAT' },
-    { id:'ORD-2026-0005', customerId:'CUS-2026-0005', customerName:'Phạm Minh Tuấn', channel:'ZALO', productCode:'SA-EC-004', productName:'Máy đo SpO2 kẹp ngón tay', quantity:1, price:280000, total:280000, status:'Confirmed', orderDate:'2026-06-20', note:'' },
-    { id:'ORD-2026-0006', customerId:'CUS-2026-0008', customerName:'Trường Mầm non Ánh Sao', channel:'LAZADA', productCode:'SA-FA-001', productName:'Túi sơ cứu cơ bản cá nhân', quantity:6, price:180000, total:1080000, status:'Completed', orderDate:'2026-06-08', note:'' },
-    { id:'ORD-2026-0007', customerId:'CUS-2026-0001', customerName:'Nguyễn Thị Mai', channel:'SHOPEE', productCode:'SA-EC-003', productName:'Máy đo đường huyết + que thử', quantity:1, price:650000, total:650000, status:'Completed', orderDate:'2026-05-20', note:'' },
-    { id:'ORD-2026-0008', customerId:'CUS-2026-0003', customerName:'Công ty TNHH Minh Phú', channel:'ALIBABA', productCode:'SA-FA-005', productName:'Bộ bổ sung / refill kit', quantity:30, price:120000, total:3600000, status:'Completed', orderDate:'2026-05-15', note:'' },
-    { id:'ORD-2026-0009', customerId:'CUS-2026-0006', customerName:'Bệnh viện Quận 7', channel:'EMAIL', productCode:'SA-FA-002', productName:'Túi sơ cứu văn phòng / doanh nghiệp', quantity:15, price:320000, total:4800000, status:'Completed', orderDate:'2026-05-01', note:'' },
-    { id:'ORD-2026-0010', customerId:'CUS-2026-0004', customerName:'Lê Thị Hoa', channel:'FACEBOOK', productCode:'SA-EC-001', productName:'Máy đo huyết áp bắp tay', quantity:1, price:850000, total:850000, status:'Quoted', orderDate:'2026-06-21', note:'Đang chờ xác nhận' },
-    { id:'ORD-2026-0011', customerId:'CUS-2026-0010', customerName:'Công ty CP An Toàn Việt', channel:'EMAIL', productCode:'SA-FA-006', productName:'Túi sơ cứu tiêu chuẩn PCCC / ISO', quantity:12, price:680000, total:8160000, status:'Completed', orderDate:'2026-05-25', note:'' },
-    { id:'ORD-2026-0012', customerId:'CUS-2026-0009', customerName:'Nguyễn Thị Lan Anh', channel:'FACEBOOK', productCode:'SA-EC-006', productName:'Máy massage vai gáy', quantity:1, price:560000, total:560000, status:'Completed', orderDate:'2026-06-12', note:'' },
+    { id:'ORD-2026-0001', customerId:'CUS-2026-0001', customerName:'Nguyễn Thị Mai', channel:'SHOPEE', productCode:'SA-EC-001', productName:'Máy đo huyết áp bắp tay', quantity:1, price:850000, total:850000, status:'Completed', orderDate:'2026-06-10', note:'', assignee:'Hải' },
+    { id:'ORD-2026-0002', customerId:'CUS-2026-0003', customerName:'Công ty TNHH Minh Phú', channel:'ALIBABA', productCode:'SA-FA-002', productName:'Túi sơ cứu văn phòng / doanh nghiệp', quantity:20, price:320000, total:6400000, status:'Completed', orderDate:'2026-06-05', note:'Giao tại kho quận 9', assignee:'Lộc' },
+    { id:'ORD-2026-0003', customerId:'CUS-2026-0002', customerName:'Trần Văn Hùng', channel:'TIKTOK', productCode:'SA-FA-003', productName:'Túi sơ cứu xe hơi / phương tiện', quantity:1, price:450000, total:450000, status:'Đang giao', orderDate:'2026-06-18', note:'', assignee:'Âu' },
+    { id:'ORD-2026-0004', customerId:'CUS-2026-0006', customerName:'Bệnh viện Quận 7', channel:'EMAIL', productCode:'SA-FA-006', productName:'Túi sơ cứu tiêu chuẩn PCCC / ISO', quantity:10, price:680000, total:6800000, status:'Paid', orderDate:'2026-06-14', note:'Cần hoá đơn VAT', assignee:'Lộc' },
+    { id:'ORD-2026-0005', customerId:'CUS-2026-0005', customerName:'Phạm Minh Tuấn', channel:'ZALO', productCode:'SA-EC-004', productName:'Máy đo SpO2 kẹp ngón tay', quantity:1, price:280000, total:280000, status:'Confirmed', orderDate:'2026-06-20', note:'', assignee:'Hải' },
+    { id:'ORD-2026-0006', customerId:'CUS-2026-0008', customerName:'Trường Mầm non Ánh Sao', channel:'LAZADA', productCode:'SA-FA-001', productName:'Túi sơ cứu cơ bản cá nhân', quantity:6, price:180000, total:1080000, status:'Hoàn thành', orderDate:'2026-06-08', note:'', assignee:'Tài' },
+    { id:'ORD-2026-0007', customerId:'CUS-2026-0001', customerName:'Nguyễn Thị Mai', channel:'SHOPEE', productCode:'SA-EC-003', productName:'Máy đo đường huyết + que thử', quantity:1, price:650000, total:650000, status:'Hoàn thành', orderDate:'2026-05-20', note:'', assignee:'Hải' },
+    { id:'ORD-2026-0008', customerId:'CUS-2026-0003', customerName:'Công ty TNHH Minh Phú', channel:'ALIBABA', productCode:'SA-FA-005', productName:'Bộ bổ sung / refill kit', quantity:30, price:120000, total:3600000, status:'Hoàn thành', orderDate:'2026-05-15', note:'', assignee:'Lộc' },
+    { id:'ORD-2026-0009', customerId:'CUS-2026-0006', customerName:'Bệnh viện Quận 7', channel:'EMAIL', productCode:'SA-FA-002', productName:'Túi sơ cứu văn phòng / doanh nghiệp', quantity:15, price:320000, total:4800000, status:'Hoàn thành', orderDate:'2026-05-01', note:'', assignee:'Lộc' },
+    { id:'ORD-2026-0010', customerId:'CUS-2026-0004', customerName:'Lê Thị Hoa', channel:'FACEBOOK', productCode:'SA-EC-001', productName:'Máy đo huyết áp bắp tay', quantity:1, price:850000, total:850000, status:'Quoted', orderDate:'2026-06-21', note:'Đang chờ xác nhận', assignee:'Tài' },
+    { id:'ORD-2026-0011', customerId:'CUS-2026-0010', customerName:'Công ty CP An Toàn Việt', channel:'EMAIL', productCode:'SA-FA-006', productName:'Túi sơ cứu tiêu chuẩn PCCC / ISO', quantity:12, price:680000, total:8160000, status:'Hoàn thành', orderDate:'2026-05-25', note:'', assignee:'Lộc' },
+    { id:'ORD-2026-0012', customerId:'CUS-2026-0009', customerName:'Nguyễn Thị Lan Anh', channel:'FACEBOOK', productCode:'SA-EC-006', productName:'Máy massage vai gáy', quantity:1, price:560000, total:560000, status:'Hoàn thành', orderDate:'2026-06-12', note:'', assignee:'Âu' },
   ];
   saveData('customers', customers);
   saveData('orders', orders);
@@ -452,6 +504,12 @@ function lineBadge(l) {
   return l==='First Aid'
     ? `<span class="badge badge-firstaid">🩺 First Aid</span>`
     : `<span class="badge badge-elderlycare">👴 Elderly Care</span>`;
+}
+function staffBadge(name) {
+  if(!name) return `<span style="color:var(--text-muted);font-size:11px">—</span>`;
+  const c=STAFF_COLORS[name]||'#718096';
+  const av=STAFF_AVATARS[name]||'👤';
+  return `<span style="background:${c}18;color:${c};border:1px solid ${c}40;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap">${av} ${name}</span>`;
 }
 
 function toast(msg, type='success') {
@@ -742,7 +800,7 @@ function renderDashboard() {
 // ============================================================
 // CUSTOMERS
 // ============================================================
-let custFilter={status:'',channel:'',segment:'',province:'',search:''};
+let custFilter={status:'',channel:'',segment:'',province:'',search:'',assignee:''};
 
 function renderCustomers() {
   const provinces=[...new Set(loadData('customers').filter(c=>c.province).map(c=>c.province))].sort();
@@ -769,6 +827,10 @@ function renderCustomers() {
         <option value="Doanh nghiệp">B2B</option>
         <option value="Cá nhân">B2C</option>
       </select>
+      <select class="form-control" style="width:130px" onchange="custFilter.assignee=this.value;refreshCustTable()">
+        <option value="">Tất cả NV</option>
+        ${STAFF.map(s=>`<option>${s}</option>`).join('')}
+      </select>
     </div>
     <div class="card"><div id="cust-table-wrap"></div></div>
   `;
@@ -783,6 +845,7 @@ function refreshCustTable() {
   if(f.channel) cs=cs.filter(c=>c.channel===f.channel);
   if(f.province) cs=cs.filter(c=>c.province===f.province);
   if(f.type) cs=cs.filter(c=>c.type===f.type);
+  if(f.assignee) cs=cs.filter(c=>c.assignee===f.assignee);
 
   const el=document.getElementById('cust-table-wrap');
   if(!el) return;
@@ -790,7 +853,7 @@ function refreshCustTable() {
   el.innerHTML=`
     <div class="table-wrap">
       <table>
-        <thead><tr><th>Mã KH</th><th>Tên khách hàng</th><th>Loại</th><th>SĐT</th><th>Tỉnh/TP</th><th>Phân khúc</th><th>Kênh</th><th>Trạng thái</th><th>Chi tiêu</th><th>Hành động</th></tr></thead>
+        <thead><tr><th>Mã KH</th><th>Tên khách hàng</th><th>Loại</th><th>SĐT</th><th>Tỉnh/TP</th><th>Phân khúc</th><th>Kênh</th><th>NV phụ trách</th><th>Trạng thái</th><th>Chi tiêu</th><th>Hành động</th></tr></thead>
         <tbody>
           ${cs.map(c=>`
             <tr>
@@ -804,6 +867,7 @@ function refreshCustTable() {
               <td>${c.province?`<span style="font-size:12px">📍 ${c.province}</span>`:'<span style="color:var(--text-muted)">—</span>'}</td>
               <td>${lineBadge(c.segment==='Both'?'First Aid':c.segment)}${c.segment==='Both'?` <span class="badge badge-elderlycare">👴</span>`:''}</td>
               <td>${channelBadge(c.channel)}</td>
+              <td>${staffBadge(c.assignee)}</td>
               <td>${statusBadge(c.status)}</td>
               <td style="font-weight:600;color:${(c.totalSpent||0)>0?'var(--success)':'var(--text-muted)'}">${fmtMoney(c.totalSpent||0)}</td>
               <td>
@@ -876,7 +940,13 @@ function custForm(d={}, editId=null) {
       </div>
     </div>
     <div class="form-row">
-      <div class="form-group"><label>Người phụ trách</label><input class="form-control" id="f-assignee" placeholder="Tên nhân viên" value="${d.assignee||''}"></div>
+      <div class="form-group">
+        <label>Nhân viên phụ trách</label>
+        <select class="form-control" id="f-assignee">
+          <option value="">— Chưa phân công —</option>
+          ${STAFF.map(s=>`<option value="${s}" ${(d.assignee||'')=== s?'selected':''}>${STAFF_AVATARS[s]} ${s}</option>`).join('')}
+        </select>
+      </div>
       <div class="form-group"><label>Ghi chú</label><input class="form-control" id="f-note" placeholder="Ghi chú thêm..." value="${d.note||''}"></div>
     </div>
   `;
@@ -887,6 +957,11 @@ function saveCust(isEdit, editId=null) {
   const phone=document.getElementById('f-phone').value.trim();
   if(!name||!phone){toast('Vui lòng nhập tên và SĐT','error');return false;}
   const customers=loadData('customers');
+  // Duplicate detection (only on new add)
+  if(!isEdit){
+    const dup=customers.find(c=>c.phone===phone||(document.getElementById('f-email').value.trim()&&c.email===document.getElementById('f-email').value.trim()));
+    if(dup){toast(`⚠️ SĐT/email đã tồn tại: ${dup.name} (${dup.id})`, 'error');return false;}
+  }
   const nd={name,phone,email:document.getElementById('f-email').value.trim(),type:document.getElementById('f-type').value,province:document.getElementById('f-province').value,segment:document.getElementById('f-segment').value,channel:document.getElementById('f-channel').value,status:document.getElementById('f-status').value,assignee:document.getElementById('f-assignee').value.trim(),note:document.getElementById('f-note').value.trim()};
   if(isEdit){
     const idx=customers.findIndex(c=>c.id===editId);
@@ -923,7 +998,7 @@ function viewCustOrders(custId) {
 // ============================================================
 // ORDERS
 // ============================================================
-let ordFilter={status:'',channel:'',search:''};
+let ordFilter={status:'',channel:'',search:'',assignee:''};
 
 function renderOrders() {
   const orders=loadData('orders');
@@ -963,6 +1038,10 @@ function renderOrders() {
         <option value="">Tất cả kênh</option>
         ${CHANNELS.map(c=>`<option>${c}</option>`).join('')}
       </select>
+      <select class="form-control" style="width:130px" onchange="ordFilter.assignee=this.value;refreshOrdTable()">
+        <option value="">Tất cả NV</option>
+        ${STAFF.map(s=>`<option>${s}</option>`).join('')}
+      </select>
     </div>
     <div class="card"><div id="ord-table-wrap"></div></div>
   `;
@@ -982,6 +1061,7 @@ function refreshOrdTable(custom=null) {
   if(f.search){const q=f.search.toLowerCase();ords=ords.filter(o=>o.customerName.toLowerCase().includes(q)||o.id.toLowerCase().includes(q)||o.productName.toLowerCase().includes(q));}
   if(f.status) ords=ords.filter(o=>o.status===f.status);
   if(f.channel) ords=ords.filter(o=>o.channel===f.channel);
+  if(f.assignee) ords=ords.filter(o=>o.assignee===f.assignee);
   ords=[...ords].sort((a,b)=>new Date(b.orderDate)-new Date(a.orderDate));
   renderOrderTable(ords);
 }
@@ -995,7 +1075,7 @@ function renderOrderTable(ords) {
   el.innerHTML=`
     <div class="table-wrap">
       <table>
-        <thead><tr><th>Mã đơn</th><th>Khách hàng</th><th>Loại</th><th>Kênh</th><th>Sản phẩm</th><th>SL</th><th>Tổng</th><th>Trạng thái</th><th>Ngày</th><th></th></tr></thead>
+        <thead><tr><th>Mã đơn</th><th>Khách hàng</th><th>Loại</th><th>Kênh</th><th>Sản phẩm</th><th>SL</th><th>Tổng</th><th>NV</th><th>Trạng thái</th><th>Ngày</th><th></th></tr></thead>
         <tbody>
           ${ords.map(o=>{
             const c=customers.find(x=>x.id===o.customerId);
@@ -1013,6 +1093,7 @@ function renderOrderTable(ords) {
               </td>
               <td style="text-align:center;font-weight:600">${o.quantity}</td>
               <td style="font-weight:700;color:var(--success)">${fmtMoney(o.total)}</td>
+              <td>${staffBadge(o.assignee)}</td>
               <td>
                 <select class="form-control" style="padding:4px 8px;font-size:11px;width:108px" onchange="updateOrdStatus('${o.id}',this.value)">
                   ${ORDER_STATUSES.map(s=>`<option ${o.status===s?'selected':''}>${s}</option>`).join('')}
@@ -1118,7 +1199,14 @@ function ordForm(d={}, editId=null) {
         <input class="form-control" id="f-ord-date" type="date" value="${d.orderDate||new Date().toISOString().split('T')[0]}">
       </div>
     </div>
-    <div class="form-row single">
+    <div class="form-row">
+      <div class="form-group">
+        <label>Nhân viên phụ trách</label>
+        <select class="form-control" id="f-ord-assignee">
+          <option value="">— Chưa phân công —</option>
+          ${STAFF.map(s=>`<option value="${s}" ${(d.assignee||'')=== s?'selected':''}>${STAFF_AVATARS[s]} ${s}</option>`).join('')}
+        </select>
+      </div>
       <div class="form-group"><label>Ghi chú</label><input class="form-control" id="f-ord-note" placeholder="Yêu cầu đặc biệt..." value="${d.note||''}"></div>
     </div>
   `;
@@ -1126,7 +1214,10 @@ function ordForm(d={}, editId=null) {
 
 function autoFillChannel(custId) {
   const c=loadData('customers').find(x=>x.id===custId);
-  if(c) document.getElementById('f-ord-ch').value=c.channel;
+  if(c){
+    document.getElementById('f-ord-ch').value=c.channel;
+    if(c.assignee) document.getElementById('f-ord-assignee').value=c.assignee;
+  }
 }
 function calcTotal() {
   const p=parseFloat(document.getElementById('f-price')?.value)||0;
@@ -1145,7 +1236,7 @@ function saveOrd(isEdit, editId=null) {
   const p=PRODUCTS.find(x=>x.code===prodCode);
   const qty=parseInt(document.getElementById('f-qty').value)||1;
   const ords=loadData('orders');
-  const nd={customerId:custId,customerName:c.name,channel:document.getElementById('f-ord-ch').value,productCode:prodCode,productName:p.name,quantity:qty,price,total:price*qty,status:document.getElementById('f-ord-status').value,orderDate:document.getElementById('f-ord-date').value,note:document.getElementById('f-ord-note').value.trim()};
+  const nd={customerId:custId,customerName:c.name,channel:document.getElementById('f-ord-ch').value,productCode:prodCode,productName:p.name,quantity:qty,price,total:price*qty,status:document.getElementById('f-ord-status').value,orderDate:document.getElementById('f-ord-date').value,note:document.getElementById('f-ord-note').value.trim(),assignee:document.getElementById('f-ord-assignee').value};
   if(isEdit){const idx=ords.findIndex(o=>o.id===editId);if(idx>=0)ords[idx]={...ords[idx],...nd};saveData('orders',ords);toast('Cập nhật đơn hàng thành công!');}
   else{const o={id:genId('ORD'),...nd};ords.push(o);saveData('orders',ords);toast(`Đã tạo ${o.id}`);}
   closeModal();if(currentPage==='orders')refreshOrdTable();return true;
@@ -1681,6 +1772,87 @@ function showConfirm(title, msg, onOk) {
 function closeModal() { document.getElementById('modal-container').innerHTML=''; window._ms=null; window._ca=null; }
 
 // ============================================================
+// GLOBAL SEARCH ⌘K
+// ============================================================
+let _gsearchOpen=false;
+function openGlobalSearch(){
+  if(_gsearchOpen)return;
+  _gsearchOpen=true;
+  const overlay=document.createElement('div');
+  overlay.id='gsearch-overlay';overlay.className='gsearch-overlay';
+  overlay.innerHTML=`
+    <div class="gsearch-box" id="gsearch-box">
+      <div class="gsearch-input-wrap">
+        <span style="font-size:18px;color:var(--text-muted)">🔍</span>
+        <input class="gsearch-input" id="gsearch-q" placeholder="Tìm khách hàng, mã đơn, sản phẩm..." autofocus oninput="runGSearch(this.value)">
+        <span style="font-size:12px;color:var(--text-muted);background:#F0F4F8;padding:3px 8px;border-radius:6px;cursor:pointer" onclick="closeGSearch()">Esc</span>
+      </div>
+      <div class="gsearch-results" id="gsearch-results">
+        <div class="gsearch-empty">Bắt đầu gõ để tìm kiếm...</div>
+      </div>
+      <div class="gsearch-footer">
+        <span>↑↓ Điều hướng</span><span>↵ Mở</span><span>Esc Đóng</span>
+        <span style="margin-left:auto">Tìm trong: Khách hàng · Đơn hàng · Sản phẩm</span>
+      </div>
+    </div>
+  `;
+  overlay.addEventListener('click',e=>{if(e.target===overlay)closeGSearch();});
+  document.body.appendChild(overlay);
+  setTimeout(()=>document.getElementById('gsearch-q')?.focus(),50);
+}
+function closeGSearch(){
+  _gsearchOpen=false;
+  document.getElementById('gsearch-overlay')?.remove();
+}
+function runGSearch(q){
+  const res=document.getElementById('gsearch-results');
+  if(!q||q.length<1){res.innerHTML='<div class="gsearch-empty">Bắt đầu gõ để tìm kiếm...</div>';return;}
+  const ql=q.toLowerCase();
+  const customers=loadData('customers').filter(c=>c.name.toLowerCase().includes(ql)||c.phone.includes(ql)||(c.email||'').toLowerCase().includes(ql)||(c.id||'').toLowerCase().includes(ql));
+  const orders=loadData('orders').filter(o=>o.id.toLowerCase().includes(ql)||o.customerName.toLowerCase().includes(ql)||o.productName.toLowerCase().includes(ql));
+  const products=PRODUCTS.filter(p=>p.name.toLowerCase().includes(ql)||p.code.toLowerCase().includes(ql));
+  if(!customers.length&&!orders.length&&!products.length){res.innerHTML='<div class="gsearch-empty">Không tìm thấy kết quả nào cho "<strong>'+q+'</strong>"</div>';return;}
+  res.innerHTML=`
+    ${customers.length?`<div class="gsearch-group">
+      <div class="gsearch-group-label">👥 Khách hàng (${customers.length})</div>
+      ${customers.slice(0,4).map(c=>`
+        <div class="gsearch-item" onclick="closeGSearch();navigate('customers');setTimeout(()=>{custFilter.search='${c.name}';refreshCustTable();},80)">
+          <div class="gsearch-item-icon">${c.type==='Doanh nghiệp'?'🏢':'👤'}</div>
+          <div class="gsearch-item-main">
+            <div class="gsearch-item-title">${c.name}</div>
+            <div class="gsearch-item-sub">${c.phone} · ${c.id} · ${staffBadge(c.assignee).replace(/<[^>]+>/g,c.assignee||'—')}</div>
+          </div>
+          ${statusBadge(c.status)}
+        </div>`).join('')}
+    </div>`:''}
+    ${orders.length?`<div class="gsearch-group">
+      <div class="gsearch-group-label">🛒 Đơn hàng (${orders.length})</div>
+      ${orders.slice(0,4).map(o=>`
+        <div class="gsearch-item" onclick="closeGSearch();navigate('orders');setTimeout(()=>{ordFilter.search='${o.id}';refreshOrdTable();},80)">
+          <div class="gsearch-item-icon">🛒</div>
+          <div class="gsearch-item-main">
+            <div class="gsearch-item-title">${o.id} — ${o.customerName}</div>
+            <div class="gsearch-item-sub">${o.productName} · ${fmtMoney(o.total)} · ${fmtDate(o.orderDate)}</div>
+          </div>
+          ${statusBadge(o.status)}
+        </div>`).join('')}
+    </div>`:''}
+    ${products.length?`<div class="gsearch-group">
+      <div class="gsearch-group-label">📦 Sản phẩm (${products.length})</div>
+      ${products.slice(0,3).map(p=>`
+        <div class="gsearch-item" onclick="closeGSearch();navigate('products')">
+          <div class="gsearch-item-icon">📦</div>
+          <div class="gsearch-item-main">
+            <div class="gsearch-item-title">${p.code} — ${p.name}</div>
+            <div class="gsearch-item-sub">${p.line} · ${p.desc}</div>
+          </div>
+          ${lineBadge(p.line)}
+        </div>`).join('')}
+    </div>`:''}
+  `;
+}
+
+// ============================================================
 // SIDEBAR RESPONSIVE
 // ============================================================
 function toggleSidebar() {
@@ -2062,6 +2234,227 @@ function toggleAcc(header) {
 }
 
 // ============================================================
+// TEAM KPI
+// ============================================================
+function getKpiTargets() {
+  const def={};
+  STAFF.forEach(s=>{ def[s]={revenue:15000000,orders:10,newCustomers:3}; });
+  try { return {...def,...JSON.parse(localStorage.getItem('safer2_kpiTargets')||'{}')}; } catch { return def; }
+}
+function saveKpiTargets(t){ localStorage.setItem('safer2_kpiTargets',JSON.stringify(t)); }
+
+function calcStaffKpi(staff, month) {
+  const orders=loadData('orders');
+  const customers=loadData('customers');
+  const targets=getKpiTargets();
+  const doneStatuses=['Completed','Hoàn thành'];
+  const staffOrds=orders.filter(o=>o.assignee===staff&&o.orderDate.startsWith(month));
+  const doneOrds=staffOrds.filter(o=>doneStatuses.includes(o.status));
+  const revenue=doneOrds.reduce((s,o)=>s+o.total,0);
+  const orderCount=doneOrds.length;
+  const newCusts=customers.filter(c=>c.assignee===staff&&c.createdAt.startsWith(month)).length;
+  const allStaffOrds=staffOrds.filter(o=>!['Quoted','Lead'].includes(o.status));
+  const convertRate=allStaffOrds.length?Math.round(doneOrds.length/allStaffOrds.length*100):0;
+  const avgOrder=doneOrds.length?Math.round(revenue/doneOrds.length):0;
+  const t=targets[staff]||{revenue:15000000,orders:10,newCustomers:3};
+  const revPct=Math.min(Math.round(revenue/t.revenue*100),150);
+  const ordPct=Math.min(Math.round(orderCount/t.orders*100),150);
+  const custPct=Math.min(Math.round(newCusts/t.newCustomers*100),150);
+  const score=Math.round(Math.min(revPct,100)*0.5+Math.min(ordPct,100)*0.3+Math.min(custPct,100)*0.2);
+  const grade=score>=85?'A':score>=70?'B':score>=50?'C':'D';
+  return {staff,revenue,orderCount,newCusts,convertRate,avgOrder,revPct,ordPct,custPct,score,grade,targets:t,doneOrds,staffOrds};
+}
+
+function gradeColor(g){return{A:'#22543D',B:'#2B6CB0',C:'#C05621',D:'#C53030'}[g]||'#718096';}
+function gradeBg(g){return{A:'#F0FFF4',B:'#EBF8FF',C:'#FFFAF0',D:'#FFF5F5'}[g]||'#F7FAFC';}
+function pctClass(p){return p>=80?'pct-good':p>=50?'pct-mid':'pct-low';}
+
+let kpiMonth=(()=>{const n=new Date();return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}`;})();
+let kpiSelectedStaff=null;
+
+function renderTeamKpi(){
+  const allKpi=STAFF.map(s=>calcStaffKpi(s,kpiMonth)).sort((a,b)=>b.score-a.score);
+  const months=[];
+  for(let i=0;i<6;i++){const d=new Date();d.setMonth(d.getMonth()-i);months.push(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`);}
+
+  document.getElementById('content').innerHTML=`
+    <!-- HEADER -->
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap">
+      <div>
+        <div style="font-size:13px;color:var(--text-muted);margin-bottom:4px">Xem tháng</div>
+        <select class="form-control" style="width:150px" onchange="kpiMonth=this.value;renderTeamKpi()">
+          ${months.map(m=>`<option value="${m}" ${kpiMonth===m?'selected':''}>${m.split('-').reverse().join('/')}</option>`).join('')}
+        </select>
+      </div>
+      <div style="margin-left:auto">
+        <button class="btn btn-outline btn-sm" onclick="openKpiTargetModal()">🎯 Đặt Target tháng</button>
+      </div>
+    </div>
+
+    <!-- STAFF SCORECARDS -->
+    <div class="kpi-staff-grid" style="margin-bottom:24px">
+      ${allKpi.map((k,i)=>`
+        <div class="staff-card ${kpiSelectedStaff===k.staff?'selected':''}" style="--staff-color:${STAFF_COLORS[k.staff]};--staff-color-light:${STAFF_COLORS[k.staff]}22" onclick="kpiSelectedStaff='${k.staff}';renderTeamKpi()">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+            <span class="staff-avatar">${STAFF_AVATARS[k.staff]}</span>
+            <span style="font-size:11px;background:#F0F4F8;color:#718096;padding:2px 7px;border-radius:10px;font-weight:700">#${i+1}</span>
+          </div>
+          <div class="staff-name" style="color:${STAFF_COLORS[k.staff]}">${k.staff}</div>
+          <div class="kpi-score-big" style="color:${gradeColor(k.grade)}">${k.score}</div>
+          <span class="kpi-grade grade-${k.grade}">${k.grade} — ${k.score>=85?'Xuất sắc':k.score>=70?'Tốt':k.score>=50?'Đạt':'Cần cải thiện'}</span>
+          <div class="kpi-bar-wrap">
+            <div class="kpi-bar"><div class="kpi-bar-fill" style="width:${Math.min(k.revPct,100)}%;background:${STAFF_COLORS[k.staff]}"></div></div>
+          </div>
+          <div style="font-size:11px;color:var(--text-muted)">${fmtMoney(k.revenue)} / ${fmtMoney(k.targets.revenue)}</div>
+        </div>
+      `).join('')}
+    </div>
+
+    <!-- DETAIL PANEL (if staff selected) -->
+    ${kpiSelectedStaff ? renderKpiDetail(allKpi.find(k=>k.staff===kpiSelectedStaff)) : `
+    <!-- LEADERBOARD -->
+    <div class="card">
+      <div class="card-header"><h3>🏆 Bảng xếp hạng tháng ${kpiMonth.split('-').reverse().join('/')}</h3></div>
+      <div class="card-body">
+        ${allKpi.map((k,i)=>`
+          <div class="leaderboard-row" onclick="kpiSelectedStaff='${k.staff}';renderTeamKpi()" style="cursor:pointer">
+            <div class="lb-rank lb-rank-${i<3?i+1:'n'}">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</div>
+            <div style="font-size:20px">${STAFF_AVATARS[k.staff]}</div>
+            <div style="flex:1">
+              <div style="font-weight:700;color:${STAFF_COLORS[k.staff]}">${k.staff}</div>
+              <div style="font-size:12px;color:var(--text-muted)">${k.orderCount} đơn · ${fmtMoney(k.revenue)}</div>
+            </div>
+            <div style="text-align:right">
+              <div style="font-size:22px;font-weight:800;color:${gradeColor(k.grade)}">${k.score}<span style="font-size:12px;font-weight:500;color:var(--text-muted)"> điểm</span></div>
+              <span class="kpi-grade grade-${k.grade}" style="font-size:11px">${k.grade}</span>
+            </div>
+            <div style="width:80px">
+              <div class="kpi-bar"><div class="kpi-bar-fill" style="width:${Math.min(k.revPct,100)}%;background:${STAFF_COLORS[k.staff]}"></div></div>
+              <div style="font-size:10px;color:var(--text-muted);margin-top:2px">${k.revPct}% DT target</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+    `}
+  `;
+}
+
+function renderKpiDetail(k){
+  if(!k) return '';
+  const color=STAFF_COLORS[k.staff];
+  return `
+    <div class="card">
+      <div class="card-header">
+        <h3>${STAFF_AVATARS[k.staff]} ${k.staff} — Chi tiết KPI tháng ${kpiMonth.split('-').reverse().join('/')}</h3>
+        <button class="btn btn-outline btn-sm" onclick="kpiSelectedStaff=null;renderTeamKpi()">← Quay lại</button>
+      </div>
+      <div class="card-body">
+        <div class="grid-2" style="margin-bottom:20px">
+          <!-- Score -->
+          <div style="background:${gradeBg(k.grade)};border-radius:12px;padding:20px;text-align:center">
+            <div style="font-size:13px;font-weight:700;color:${gradeColor(k.grade)};margin-bottom:8px">KPI Score</div>
+            <div style="font-size:56px;font-weight:800;color:${gradeColor(k.grade)};line-height:1">${k.score}</div>
+            <span class="kpi-grade grade-${k.grade}" style="font-size:14px">Grade ${k.grade} — ${k.score>=85?'Xuất sắc':k.score>=70?'Tốt':k.score>=50?'Đạt':'Cần cải thiện'}</span>
+            <div style="margin-top:12px;font-size:11px;color:var(--text-muted)">Doanh thu 50% · Đơn hàng 30% · KH mới 20%</div>
+          </div>
+          <!-- Metrics -->
+          <div>
+            <div class="metric-row">
+              <span class="metric-label">💰 Doanh thu</span>
+              <div style="text-align:right">
+                <div class="metric-val">${fmtMoney(k.revenue)}</div>
+                <div style="font-size:11px;color:var(--text-muted)">Target: ${fmtMoney(k.targets.revenue)}</div>
+                <span class="metric-pct ${pctClass(k.revPct)}">${k.revPct}%</span>
+              </div>
+            </div>
+            <div class="metric-row">
+              <span class="metric-label">🛒 Đơn hoàn thành</span>
+              <div style="text-align:right">
+                <div class="metric-val">${k.orderCount} đơn</div>
+                <div style="font-size:11px;color:var(--text-muted)">Target: ${k.targets.orders} đơn</div>
+                <span class="metric-pct ${pctClass(k.ordPct)}">${k.ordPct}%</span>
+              </div>
+            </div>
+            <div class="metric-row">
+              <span class="metric-label">👤 KH mới</span>
+              <div style="text-align:right">
+                <div class="metric-val">${k.newCusts} KH</div>
+                <div style="font-size:11px;color:var(--text-muted)">Target: ${k.targets.newCustomers} KH</div>
+                <span class="metric-pct ${pctClass(k.custPct)}">${k.custPct}%</span>
+              </div>
+            </div>
+            <div class="metric-row">
+              <span class="metric-label">📊 Tỉ lệ convert</span>
+              <div class="metric-val">${k.convertRate}%</div>
+            </div>
+            <div class="metric-row">
+              <span class="metric-label">💵 Avg order value</span>
+              <div class="metric-val">${k.avgOrder?fmtMoney(k.avgOrder):'—'}</div>
+            </div>
+          </div>
+        </div>
+        <!-- Recent orders -->
+        <div class="section-divider">Đơn hàng tháng này (${k.staffOrds.length} đơn)</div>
+        ${k.staffOrds.length===0?'<div class="empty-state" style="padding:24px"><div class="emoji">📭</div><h4>Chưa có đơn hàng nào</h4></div>':
+        `<div class="table-wrap"><table>
+          <thead><tr><th>Mã đơn</th><th>Khách hàng</th><th>Sản phẩm</th><th>Tổng</th><th>Trạng thái</th><th>Ngày</th></tr></thead>
+          <tbody>
+            ${k.staffOrds.sort((a,b)=>new Date(b.orderDate)-new Date(a.orderDate)).map(o=>`
+              <tr>
+                <td style="font-family:monospace;font-size:11px;color:var(--primary)">${o.id}</td>
+                <td>${o.customerName}</td>
+                <td style="font-size:12px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${o.productName}</td>
+                <td style="font-weight:700;color:var(--success)">${fmtMoney(o.total)}</td>
+                <td>${statusBadge(o.status)}</td>
+                <td style="font-size:12px;color:var(--text-muted)">${fmtDate(o.orderDate)}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table></div>`}
+      </div>
+    </div>
+  `;
+}
+
+function openKpiTargetModal(){
+  const targets=getKpiTargets();
+  const body=`
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px">Đặt target cho từng nhân viên trong tháng <strong>${kpiMonth.split('-').reverse().join('/')}</strong></p>
+    ${STAFF.map(s=>`
+      <div style="border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:12px">
+        <div style="font-weight:700;color:${STAFF_COLORS[s]};margin-bottom:10px">${STAFF_AVATARS[s]} ${s}</div>
+        <div class="form-row cols-3" style="margin-bottom:0">
+          <div class="form-group">
+            <label>Doanh thu (₫)</label>
+            <input class="form-control" id="kt-rev-${s}" type="number" value="${targets[s]?.revenue||15000000}" step="1000000">
+          </div>
+          <div class="form-group">
+            <label>Số đơn hoàn thành</label>
+            <input class="form-control" id="kt-ord-${s}" type="number" value="${targets[s]?.orders||10}" min="1">
+          </div>
+          <div class="form-group">
+            <label>KH mới</label>
+            <input class="form-control" id="kt-cust-${s}" type="number" value="${targets[s]?.newCustomers||3}" min="0">
+          </div>
+        </div>
+      </div>
+    `).join('')}
+  `;
+  showModal('🎯 Đặt KPI Target tháng', body, ()=>{
+    const t={};
+    STAFF.forEach(s=>{
+      t[s]={
+        revenue:parseInt(document.getElementById(`kt-rev-${s}`).value)||15000000,
+        orders:parseInt(document.getElementById(`kt-ord-${s}`).value)||10,
+        newCustomers:parseInt(document.getElementById(`kt-cust-${s}`).value)||3
+      };
+    });
+    saveKpiTargets(t);closeModal();toast('Đã lưu KPI targets!');renderTeamKpi();
+  });
+}
+
+// ============================================================
 // PHOTO LIBRARY
 // ============================================================
 const PHOTO_DATA = [
@@ -2153,21 +2546,55 @@ function showPhotoDetail(code) {
 function renderPage(p) {
   ({dashboard:renderDashboard,customers:renderCustomers,orders:renderOrders,
     products:renderProducts,channels:renderChannels,refill:renderRefill,
-    knowledge:renderKnowledge,photos:renderPhotos,settings:renderSettings
+    team:renderTeamKpi,knowledge:renderKnowledge,photos:renderPhotos,settings:renderSettings
   }[p]||renderDashboard)();
 }
 
 // ============================================================
 // INIT
 // ============================================================
+function migrateData() {
+  // Backfill missing assignee on customers
+  const custs = loadData('customers');
+  let custDirty = false;
+  custs.forEach((c,i) => {
+    if (!c.assignee) { c.assignee = STAFF[i % STAFF.length]; custDirty = true; }
+    if (!c.createdAt) { c.createdAt = '2026-05-01'; custDirty = true; }
+  });
+  if (custDirty) localStorage.setItem('safer2_customers', JSON.stringify(custs));
+
+  // Backfill missing assignee on orders
+  const custMap = {};
+  custs.forEach(c => { custMap[c.id] = c; });
+  const ords = loadData('orders');
+  let ordDirty = false;
+  ords.forEach((o,i) => {
+    if (!o.assignee) {
+      // Try to inherit from customer, else round-robin
+      const cust = custMap[o.customerId];
+      o.assignee = (cust && cust.assignee) ? cust.assignee : STAFF[i % STAFF.length];
+      ordDirty = true;
+    }
+  });
+  if (ordDirty) localStorage.setItem('safer2_orders', JSON.stringify(ords));
+}
+
 document.addEventListener('DOMContentLoaded',()=>{
   seedData();
+  migrateData();
   // Apply saved theme
   const savedTheme = localStorage.getItem('safer2_theme') || 'teal';
   applyTheme(savedTheme, false);
   document.getElementById('topbar-date').textContent=new Date().toLocaleDateString('vi-VN',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
   updateRefillBadge();
   renderDashboard();
+  // Global search shortcut
+  document.addEventListener('keydown',e=>{
+    if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();openGlobalSearch();}
+    if(e.key==='Escape'&&_gsearchOpen){closeGSearch();}
+  });
+  // Show ⌘K hint on desktop
+  if(window.innerWidth>820) document.getElementById('search-hint').style.display='inline';
   // Close sidebar on mobile nav clicks
   document.querySelectorAll('.nav-item').forEach(el=>{
     el.addEventListener('click',()=>{ if(window.innerWidth<=820) closeSidebar(); });
