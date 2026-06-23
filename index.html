@@ -226,6 +226,81 @@
   #modal-container .modal-overlay { pointer-events: all; }
 
   @media (max-width: 1200px) { .kpi-grid { grid-template-columns: repeat(2,1fr); } .grid-2 { grid-template-columns: 1fr; } .product-grid { grid-template-columns: repeat(2,1fr); } }
+
+  /* ── RESPONSIVE SIDEBAR ── */
+  .hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; padding:8px; border-radius:8px; background:transparent; border:none; }
+  .hamburger span { display:block; width:20px; height:2px; background:var(--text); border-radius:2px; transition:all 0.3s; }
+  .sidebar-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:99; }
+  .sidebar-overlay.visible { display:block; }
+  #sidebar { transition: transform 0.28s cubic-bezier(.4,0,.2,1); }
+  @media (max-width: 820px) {
+    .hamburger { display:flex; }
+    #sidebar { transform:translateX(-100%); z-index:200; }
+    #sidebar.open { transform:translateX(0); box-shadow:6px 0 30px rgba(0,0,0,0.25); }
+    #main { margin-left:0 !important; }
+    #content { padding:14px; }
+    .kpi-grid { grid-template-columns: repeat(2,1fr) !important; }
+    .kpi-grid-3 { grid-template-columns: 1fr 1fr !important; }
+    .grid-2,.grid-3,.grid-3-1 { grid-template-columns:1fr !important; }
+    .product-grid { grid-template-columns: repeat(2,1fr) !important; }
+    .modal { width:96vw !important; }
+    .form-row { grid-template-columns:1fr !important; }
+    .pipeline-wrap { flex-wrap:wrap; }
+    .pipe-stage { min-width:80px; border-radius:8px !important; border-right:1px solid var(--border) !important; }
+  }
+  @media (max-width: 480px) {
+    .kpi-grid { grid-template-columns:1fr !important; }
+    .product-grid { grid-template-columns:1fr !important; }
+    #topbar { padding:0 14px; }
+    #topbar h2 { font-size:14px; }
+  }
+
+  /* ── SETTINGS ── */
+  .settings-section { margin-bottom:28px; }
+  .settings-section h4 { font-size:13px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:.4px; margin-bottom:14px; padding-bottom:8px; border-bottom:1px solid var(--border); }
+  .theme-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:10px; }
+  .theme-swatch { border-radius:12px; overflow:hidden; border:3px solid transparent; cursor:pointer; transition:all .2s; }
+  .theme-swatch.active { border-color: #333; box-shadow:0 0 0 2px rgba(0,0,0,.15); }
+  .theme-swatch:hover { transform:translateY(-2px); }
+  .swatch-color { height:52px; }
+  .swatch-label { padding:7px 8px; font-size:11px; font-weight:600; text-align:center; background:white; border-top:1px solid var(--border); }
+  @media(max-width:600px){ .theme-grid{ grid-template-columns:repeat(3,1fr); } }
+
+  /* ── KNOWLEDGE ── */
+  .kb-tabs { display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap; }
+  .kb-tab { padding:8px 18px; border-radius:20px; border:1px solid var(--border); background:white; font-size:13px; font-weight:600; cursor:pointer; transition:all .15s; }
+  .kb-tab.active { background:var(--primary); color:white; border-color:var(--primary); }
+  .kb-tab:hover:not(.active) { border-color:var(--primary); color:var(--primary); }
+  .kb-section { display:none; }
+  .kb-section.active { display:block; }
+  .kb-hero { background:linear-gradient(135deg,var(--primary),var(--primary-dark)); border-radius:14px; padding:24px 28px; color:white; margin-bottom:20px; }
+  .kb-hero h2 { font-size:20px; font-weight:700; margin-bottom:6px; }
+  .kb-hero p { opacity:.85; font-size:13px; line-height:1.6; }
+  .accordion { border:1px solid var(--border); border-radius:12px; overflow:hidden; margin-bottom:16px; }
+  .acc-header { padding:14px 18px; display:flex; align-items:center; justify-content:space-between; cursor:pointer; font-weight:600; font-size:14px; background:white; border-bottom:1px solid transparent; user-select:none; }
+  .acc-header:hover { background:#FAFBFC; }
+  .acc-header.open { background:var(--primary-light); border-bottom-color:var(--border); color:var(--primary-dark); }
+  .acc-body { padding:0 18px; max-height:0; overflow:hidden; transition:max-height .35s ease, padding .25s; }
+  .acc-body.open { max-height:2000px; padding:16px 18px; }
+  .law-box { background:#FFF7ED; border-left:4px solid #F39C12; border-radius:0 8px 8px 0; padding:12px 16px; margin:12px 0; font-size:13px; line-height:1.7; }
+  .law-box strong { color:#C05621; }
+  .spec-table { width:100%; border-collapse:collapse; margin:10px 0; font-size:13px; }
+  .spec-table th { background:#F7FAFC; padding:8px 12px; text-align:left; font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; }
+  .spec-table td { padding:8px 12px; border-bottom:1px solid var(--border); vertical-align:top; }
+  .spec-table tr:last-child td { border-bottom:none; }
+  .tip-box { background:#EBF8FF; border-left:4px solid #3182CE; border-radius:0 8px 8px 0; padding:12px 16px; margin:12px 0; font-size:13px; line-height:1.7; }
+
+  /* ── PHOTO LIBRARY ── */
+  .photo-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+  @media(max-width:900px){ .photo-grid{ grid-template-columns:repeat(2,1fr); } }
+  @media(max-width:480px){ .photo-grid{ grid-template-columns:1fr; } }
+  .photo-card { background:white; border:1px solid var(--border); border-radius:12px; overflow:hidden; transition:box-shadow .2s, transform .2s; cursor:pointer; }
+  .photo-card:hover { box-shadow:0 6px 20px rgba(0,0,0,.1); transform:translateY(-2px); }
+  .photo-thumb { height:140px; display:flex; align-items:center; justify-content:center; font-size:52px; position:relative; }
+  .photo-thumb .pcode-tag { position:absolute; top:8px; left:8px; background:rgba(0,0,0,.55); color:white; font-size:10px; font-weight:700; padding:3px 7px; border-radius:20px; font-family:monospace; }
+  .photo-info { padding:12px 14px; }
+  .photo-info .pname { font-size:13px; font-weight:600; line-height:1.4; margin-bottom:6px; }
+  .photo-info .ptags { display:flex; gap:5px; flex-wrap:wrap; }
 </style>
 </head>
 <body>
@@ -242,13 +317,23 @@
       <div class="nav-item" onclick="navigate('products')" id="nav-products"><span class="icon">📦</span> Sản phẩm</div>
       <div class="nav-item" onclick="navigate('channels')" id="nav-channels"><span class="icon">📡</span> Báo cáo kênh</div>
       <div class="nav-item" onclick="navigate('refill')" id="nav-refill"><span class="icon">🔔</span> Nhắc Refill <span id="refill-badge" style="margin-left:auto;background:#E74C3C;color:white;font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px;display:none">0</span></div>
+      <div style="padding:8px 16px 4px;font-size:10px;font-weight:700;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.5px;margin-top:8px">Hỗ trợ team</div>
+      <div class="nav-item" onclick="navigate('knowledge')" id="nav-knowledge"><span class="icon">📚</span> Kiến thức SP</div>
+      <div class="nav-item" onclick="navigate('photos')" id="nav-photos"><span class="icon">🖼️</span> Photo Library</div>
+      <div class="nav-item" onclick="navigate('settings')" id="nav-settings"><span class="icon">⚙️</span> Cài đặt</div>
     </nav>
     <div class="sidebar-footer">Safer+ CRM · June 2026</div>
   </div>
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
 
   <div id="main">
     <div id="topbar">
-      <h2 id="page-title">Dashboard</h2>
+      <div style="display:flex;align-items:center;gap:10px">
+        <button class="hamburger" id="hamburger-btn" onclick="toggleSidebar()" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+        <h2 id="page-title">Dashboard</h2>
+      </div>
       <div class="topbar-right">
         <span id="topbar-date" style="color:var(--text-muted);font-size:12px;"></span>
         <button class="btn btn-primary" id="topbar-cta" onclick="topbarAction()">
@@ -388,8 +473,8 @@ function navigate(page) {
   document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
   const navEl=document.getElementById('nav-'+page);
   if(navEl) navEl.classList.add('active');
-  const titles={dashboard:'Dashboard',customers:'Khách hàng',orders:'Đơn hàng',products:'Danh sách sản phẩm',channels:'Báo cáo kênh',refill:'🔔 Nhắc Refill — First Aid'};
-  const ctas={dashboard:'Thêm khách hàng',customers:'Thêm khách hàng',orders:'Thêm đơn hàng',products:'',channels:'',refill:''};
+  const titles={dashboard:'Dashboard',customers:'Khách hàng',orders:'Đơn hàng',products:'Danh sách sản phẩm',channels:'Báo cáo kênh',refill:'🔔 Nhắc Refill — First Aid',knowledge:'📚 Kiến thức sản phẩm',photos:'🖼️ Photo Library',settings:'⚙️ Cài đặt'};
+  const ctas={dashboard:'Thêm khách hàng',customers:'Thêm khách hàng',orders:'Thêm đơn hàng',products:'',channels:'',refill:'',knowledge:'',photos:'',settings:''};
   document.getElementById('page-title').textContent=titles[page]||page;
   document.getElementById('topbar-cta-label').textContent=ctas[page]||'';
   document.getElementById('topbar-cta').style.display=ctas[page]?'':'none';
@@ -1596,17 +1681,497 @@ function showConfirm(title, msg, onOk) {
 function closeModal() { document.getElementById('modal-container').innerHTML=''; window._ms=null; window._ca=null; }
 
 // ============================================================
+// SIDEBAR RESPONSIVE
+// ============================================================
+function toggleSidebar() {
+  const s=document.getElementById('sidebar');
+  const o=document.getElementById('sidebar-overlay');
+  s.classList.toggle('open');
+  o.classList.toggle('visible');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('visible');
+}
+// Close sidebar on navigate (mobile)
+const _origNavigate = navigate;
+// Patch navigate to close sidebar on mobile
+window.addEventListener('DOMContentLoaded', ()=>{
+  document.querySelectorAll('.nav-item').forEach(el=>{
+    el.addEventListener('click', ()=>{ if(window.innerWidth<=820) closeSidebar(); });
+  });
+});
+
+// ============================================================
+// SETTINGS
+// ============================================================
+const THEMES = {
+  teal:   { name:'Teal (Mặc định)', primary:'#00A6A6', dark:'#007E7E', light:'#E0F7F7', sidebar:'#0D2B35', accent:'#00D4D4' },
+  blue:   { name:'Ocean Blue',      primary:'#2563EB', dark:'#1D4ED8', light:'#EFF6FF', sidebar:'#1E3A5F', accent:'#60A5FA' },
+  green:  { name:'Forest Green',    primary:'#059669', dark:'#047857', light:'#ECFDF5', sidebar:'#064E3B', accent:'#34D399' },
+  purple: { name:'Royal Purple',    primary:'#7C3AED', dark:'#6D28D9', light:'#F5F3FF', sidebar:'#2D1B69', accent:'#A78BFA' },
+  orange: { name:'Sunset Orange',   primary:'#D97706', dark:'#B45309', light:'#FFFBEB', sidebar:'#431407', accent:'#FBBF24' },
+  rose:   { name:'Rose Red',        primary:'#E11D48', dark:'#BE123C', light:'#FFF1F2', sidebar:'#4C0519', accent:'#FB7185' },
+};
+
+function applyTheme(key, save=true) {
+  const t = THEMES[key];
+  if(!t) return;
+  const r = document.documentElement.style;
+  r.setProperty('--primary', t.primary);
+  r.setProperty('--primary-dark', t.dark);
+  r.setProperty('--primary-light', t.light);
+  document.getElementById('sidebar').style.background = t.sidebar;
+  if(save) { localStorage.setItem('safer2_theme', key); toast('Đã áp dụng theme '+t.name+'!'); }
+  // refresh active states
+  document.querySelectorAll('.theme-swatch').forEach(el=>el.classList.toggle('active', el.dataset.theme===key));
+}
+
+function renderSettings() {
+  const savedTheme = localStorage.getItem('safer2_theme') || 'teal';
+  document.getElementById('content').innerHTML = `
+    <div class="card" style="max-width:760px">
+      <div class="card-header"><h3>⚙️ Cài đặt CRM</h3></div>
+      <div class="card-body">
+
+        <div class="settings-section">
+          <h4>🎨 Giao diện & màu sắc</h4>
+          <div class="theme-grid">
+            ${Object.entries(THEMES).map(([k,t])=>`
+              <div class="theme-swatch ${k===savedTheme?'active':''}" data-theme="${k}" onclick="applyTheme('${k}')" title="${t.name}">
+                <div class="swatch-color" style="background:linear-gradient(135deg,${t.primary},${t.dark})"></div>
+                <div class="swatch-label">${t.name}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h4>📋 Thông tin hệ thống</h4>
+          <table class="spec-table">
+            <tr><td style="color:var(--text-muted);width:160px">Phiên bản</td><td><strong>Safer+ CRM v2.1</strong></td></tr>
+            <tr><td style="color:var(--text-muted)">Thương hiệu</td><td>Safer+ — Y tế Sơn Hương</td></tr>
+            <tr><td style="color:var(--text-muted)">Tổng khách hàng</td><td>${loadData('customers').length} khách</td></tr>
+            <tr><td style="color:var(--text-muted)">Tổng đơn hàng</td><td>${loadData('orders').length} đơn</td></tr>
+            <tr><td style="color:var(--text-muted)">Dữ liệu lưu tại</td><td>Trình duyệt (localStorage)</td></tr>
+          </table>
+        </div>
+
+        <div class="settings-section">
+          <h4>🗂️ Quản lý dữ liệu</h4>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn btn-outline" onclick="exportAllData()">📤 Xuất toàn bộ dữ liệu (.json)</button>
+            <button class="btn btn-outline" onclick="document.getElementById('import-file').click()">📥 Nhập dữ liệu (.json)</button>
+            <input type="file" id="import-file" accept=".json" style="display:none" onchange="importAllData(event)">
+            <button class="btn btn-danger btn-sm" onclick="confirmResetData()">🗑️ Reset về dữ liệu mẫu</button>
+          </div>
+          <p style="font-size:12px;color:var(--text-muted);margin-top:10px">⚠️ Dữ liệu lưu trong trình duyệt. Nên xuất backup định kỳ.</p>
+        </div>
+
+      </div>
+    </div>
+  `;
+}
+
+function exportAllData() {
+  const payload = { customers: loadData('customers'), orders: loadData('orders'), refillLogs: loadData('refillLogs',[]) };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
+  const a = document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download=`safer-crm-backup-${new Date().toISOString().split('T')[0]}.json`; a.click();
+  toast('Đã xuất dữ liệu!');
+}
+function importAllData(e) {
+  const file = e.target.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const d = JSON.parse(ev.target.result);
+      if(d.customers) saveData('customers', d.customers);
+      if(d.orders) saveData('orders', d.orders);
+      if(d.refillLogs) saveData('refillLogs', d.refillLogs);
+      toast('Nhập dữ liệu thành công!'); renderSettings();
+    } catch { toast('File không hợp lệ!','error'); }
+  };
+  reader.readAsText(file);
+  e.target.value='';
+}
+function confirmResetData() {
+  showConfirm('Reset dữ liệu mẫu?','Toàn bộ dữ liệu hiện tại sẽ bị xoá và thay bằng dữ liệu demo.', ()=>{
+    ['safer2_customers','safer2_orders','safer2_refillLogs'].forEach(k=>localStorage.removeItem(k));
+    closeModal(); seedData(); toast('Đã reset dữ liệu mẫu!'); navigate('dashboard');
+  });
+}
+
+// ============================================================
+// KNOWLEDGE BASE
+// ============================================================
+const KB_CONTENT = {
+  firstaid: {
+    label: '🩺 First Aid', icon: '🩺',
+    hero: 'Kiến thức cơ bản về Sơ cứu & Dòng sản phẩm First Aid',
+    heroSub: 'Hiểu rõ sản phẩm để tư vấn đúng cho từng khách hàng — cá nhân, gia đình, doanh nghiệp.',
+    sections: [
+      { title: '❓ Sơ cứu là gì? Tại sao cần túi sơ cứu?', content: `
+        <p style="line-height:1.8;margin-bottom:10px">Sơ cứu (First Aid) là những biện pháp xử lý ban đầu ngay tại hiện trường trước khi có sự hỗ trợ y tế chuyên nghiệp. Thống kê cho thấy <strong>60–80% ca tử vong do tai nạn</strong> có thể ngăn chặn được nếu được sơ cứu đúng cách trong 4–6 phút đầu tiên (còn gọi là "giờ vàng").</p>
+        <div class="tip-box">💡 <strong>Quy tắc DR ABC trong sơ cứu:</strong><br>
+        <strong>D</strong>anger – Kiểm tra nguy hiểm xung quanh<br>
+        <strong>R</strong>esponse – Kiểm tra phản ứng nạn nhân<br>
+        <strong>A</strong>irway – Khai thông đường thở<br>
+        <strong>B</strong>reathing – Kiểm tra hơi thở<br>
+        <strong>C</strong>irculation – Kiểm tra mạch, cầm máu</div>
+        <p style="line-height:1.8">Túi sơ cứu đúng chuẩn giúp xử lý: <strong>vết thương hở, bỏng nhẹ, gãy xương, chảy máu, dị vật, ngất xỉu</strong> và nhiều tình huống khẩn cấp khác.</p>
+      ` },
+      { title: '📦 SA-FA-001 — Túi sơ cứu cơ bản cá nhân', content: `
+        <p style="line-height:1.8;margin-bottom:10px">Dành cho cá nhân và hộ gia đình. Đây là sản phẩm entry-level, phù hợp để bán qua Shopee, TikTok cho B2C.</p>
+        <table class="spec-table"><tr><th>Thông tin</th><th>Chi tiết</th></tr>
+        <tr><td>Đối tượng</td><td>Cá nhân, gia đình 2–5 người</td></tr>
+        <tr><td>Kích thước túi</td><td>Nhỏ gọn, tiện mang theo</td></tr>
+        <tr><td>Vật tư tiêu biểu</td><td>Băng gạc, băng keo, kéo, paracetamol, bông, cồn 70°, dung dịch rửa vết thương, găng tay</td></tr>
+        <tr><td>Điểm bán chính</td><td>B2C: Shopee, TikTok, Facebook, Zalo</td></tr>
+        <tr><td>Upsell tiếp theo</td><td>SA-FA-005 (Refill kit) sau 3 tháng</td></tr></table>
+        <div class="tip-box">💬 <strong>Script tư vấn:</strong> "Túi sơ cứu cơ bản Safer+ đầy đủ dụng cụ xử lý 90% tình huống thường gặp tại nhà — từ vết đứt tay, bỏng nhẹ đến trẻ em bị té ngã. Giá chỉ từ 180,000₫."</div>
+      ` },
+      { title: '🏢 SA-FA-002 — Túi sơ cứu văn phòng / doanh nghiệp', content: `
+        <p style="line-height:1.8;margin-bottom:10px">Sản phẩm B2B quan trọng nhất. Doanh nghiệp từ 10 nhân sự trở lên <strong>bắt buộc</strong> phải trang bị theo quy định pháp luật.</p>
+        <table class="spec-table"><tr><th>Thông tin</th><th>Chi tiết</th></tr>
+        <tr><td>Đối tượng</td><td>Văn phòng, công ty, trường học từ 10 người</td></tr>
+        <tr><td>Quy mô</td><td>Lớn hơn túi cá nhân, nhiều vật tư hơn</td></tr>
+        <tr><td>Vật tư tiêu biểu</td><td>Đầy đủ theo TT19/2016, thêm nẹp cố định, mặt nạ CPR, băng tam giác</td></tr>
+        <tr><td>Kênh bán chính</td><td>B2B: Email, Zalo, Alibaba — gặp trực tiếp HR/Admin</td></tr>
+        <tr><td>Refill cycle</td><td>6–12 tháng (vật tư hết hạn, tiêu hao)</td></tr></table>
+        <div class="law-box">⚖️ <strong>Căn cứ pháp lý:</strong> Theo Thông tư 19/2016/TT-BYT, mọi doanh nghiệp phải trang bị tủ/túi sơ cứu và cử người phụ trách sơ cứu. Chi phí được hạch toán vào chi phí doanh nghiệp.</div>
+      ` },
+      { title: '🚗 SA-FA-003 — Túi sơ cứu xe hơi / phương tiện', content: `
+        <p style="line-height:1.8;margin-bottom:10px">Theo Nghị định 10/2020/NĐ-CP và Thông tư 12/2020/TT-BGTVT, xe ô tô kinh doanh vận tải bắt buộc phải có túi sơ cứu. Đây là cơ hội B2B lớn (taxi, xe tải, logistics).</p>
+        <table class="spec-table"><tr><th>Phân khúc</th><th>Cơ hội bán</th></tr>
+        <tr><td>Cá nhân (xe cá nhân)</td><td>Shopee, TikTok — "quà tặng xe hơi"</td></tr>
+        <tr><td>Xe kinh doanh (taxi/Grab)</td><td>B2B — Zalo, Email — liên hệ đội trưởng xe</td></tr>
+        <tr><td>Công ty logistic</td><td>B2B bulk — Email, Alibaba</td></tr></table>
+      ` },
+      { title: '🏕️ SA-FA-004 — Túi sơ cứu dã ngoại / thể thao', content: `
+        <p style="line-height:1.8;margin-bottom:10px">Túi gọn nhẹ, kháng nước, dành cho người yêu outdoor: hiking, camping, leo núi, chạy bộ.</p>
+        <div class="tip-box">💡 <strong>Target audience:</strong> Cộng đồng outdoor, nhóm leo núi, CLB chạy bộ, trường thể thao. Bán tốt qua Facebook Groups và TikTok lifestyle content.</div>
+        <p style="line-height:1.8">Vật tư đặc trưng thêm: băng ép lạnh, kẹp gai cây/bướm, thuốc chống côn trùng, còi khẩn cấp, blanket giữ nhiệt.</p>
+      ` },
+      { title: '🔄 SA-FA-005 — Bộ bổ sung / Refill Kit', content: `
+        <p style="line-height:1.8;margin-bottom:10px">Sản phẩm <strong>recurring revenue</strong> quan trọng nhất. Khách đã mua túi → sau 3 tháng nhắc refill → mua kit bổ sung.</p>
+        <div class="tip-box">📈 <strong>Chiến lược:</strong> Đây là lý do tồn tại của trang Nhắc Refill. Mỗi khách mua SA-FA-001 đến 004 đều là potential buyer của SA-FA-005 sau 3–6 tháng.</div>
+        <table class="spec-table"><tr><th>Loại refill</th><th>Thường cần bổ sung</th></tr>
+        <tr><td>Vật tư tiêu hao</td><td>Băng gạc, bông, cồn, paracetamol</td></tr>
+        <tr><td>Vật tư hết hạn</td><td>Thuốc, dung dịch sát khuẩn (&lt;12 tháng)</td></tr>
+        <tr><td>Vật tư hỏng/dùng rồi</td><td>Kéo, kẹp, găng tay</td></tr></table>
+      ` },
+      { title: '🏭 SA-FA-006 — Túi sơ cứu tiêu chuẩn PCCC / ISO', content: `
+        <p style="line-height:1.8;margin-bottom:10px">Sản phẩm B2B cao cấp nhất, bắt buộc với nhà máy, bệnh viện, khu công nghiệp theo QCVN và tiêu chuẩn PCCC.</p>
+        <div class="law-box">⚖️ <strong>Quy định:</strong> Nghị định 136/2020/NĐ-CP về PCCC yêu cầu mọi cơ sở có nguy cơ cháy nổ phải trang bị dụng cụ sơ cứu đạt chuẩn. Kiểm tra định kỳ 6 tháng/lần.</div>
+        <p style="line-height:1.8">Kênh bán: trực tiếp (gặp HSE Manager, Safety Officer), tender/đấu thầu, Alibaba B2B. Giá trị đơn cao (6–50 triệu/hợp đồng).</p>
+      ` },
+    ]
+  },
+  law: {
+    label: '⚖️ Pháp luật', icon: '⚖️',
+    hero: 'Thông tư & Nghị định về Sơ cứu tại Việt Nam',
+    heroSub: 'Hiểu đúng quy định để tư vấn B2B hiệu quả — đây là "công cụ bán hàng" mạnh nhất.',
+    sections: [
+      { title: '📜 Thông tư 19/2016/TT-BYT — Sơ cứu tại nơi làm việc', content: `
+        <div class="law-box">
+          <strong>Thông tư 19/2016/TT-BYT</strong> của Bộ Y tế, ban hành ngày 30/06/2016, quy định về <strong>quản lý vệ sinh lao động và sức khỏe người lao động</strong>, trong đó có điều khoản bắt buộc về trang bị sơ cứu tại nơi làm việc.
+        </div>
+        <table class="spec-table">
+          <tr><th>Quy định</th><th>Nội dung</th></tr>
+          <tr><td>Đối tượng áp dụng</td><td>Tất cả doanh nghiệp, cơ sở sản xuất, trường học, khu công nghiệp tại Việt Nam</td></tr>
+          <tr><td>Tủ/túi sơ cứu</td><td>Bắt buộc trang bị, số lượng theo số lao động và mức độ nguy hiểm</td></tr>
+          <tr><td>Người phụ trách</td><td>Phải có ít nhất 1 người được đào tạo sơ cứu cơ bản</td></tr>
+          <tr><td>Kiểm tra định kỳ</td><td>Kiểm tra và bổ sung vật tư tối thiểu 6 tháng/lần</td></tr>
+          <tr><td>Chi phí</td><td>Được hạch toán vào chi phí vận hành doanh nghiệp</td></tr>
+        </table>
+        <div class="tip-box">💬 <strong>Cách dùng khi tư vấn B2B:</strong> "Theo Thông tư 19/2016/TT-BYT, công ty anh/chị bắt buộc phải trang bị túi sơ cứu đạt chuẩn. Safer+ cung cấp giải pháp trọn gói, có hỗ trợ văn bản xác nhận tiêu chuẩn."</div>
+      ` },
+      { title: '🚗 Nghị định 10/2020/NĐ-CP — Sơ cứu trên xe', content: `
+        <div class="law-box">
+          <strong>Nghị định 10/2020/NĐ-CP</strong> về điều kiện kinh doanh vận tải bằng xe ô tô, quy định xe kinh doanh vận tải phải trang bị túi sơ cứu theo quy định của Bộ Y tế.
+        </div>
+        <table class="spec-table">
+          <tr><th>Loại xe</th><th>Yêu cầu</th></tr>
+          <tr><td>Xe taxi, xe hợp đồng</td><td>Bắt buộc có túi sơ cứu trên xe</td></tr>
+          <tr><td>Xe vận tải hành khách</td><td>Túi sơ cứu + nhân viên được đào tạo</td></tr>
+          <tr><td>Xe tải thương mại</td><td>Theo quy định của đơn vị vận tải</td></tr>
+        </table>
+        <div class="tip-box">🎯 <strong>Cơ hội:</strong> Việt Nam có ~500,000 xe kinh doanh vận tải. Đây là thị trường B2B khổng lồ cho SA-FA-003.</div>
+      ` },
+      { title: '🏭 QCVN về PCCC & An toàn lao động', content: `
+        <div class="law-box">
+          <strong>Nghị định 136/2020/NĐ-CP</strong> quy định về PCCC và Luật An toàn vệ sinh lao động 2015 yêu cầu mọi cơ sở sản xuất, kho xưởng, bệnh viện phải có trang bị y tế sơ cứu đạt chuẩn.
+        </div>
+        <p style="line-height:1.8;margin-bottom:10px">Các cơ sở phải tuân thủ:</p>
+        <ul style="line-height:2;margin-left:18px;font-size:13px">
+          <li>Nhà máy, xưởng sản xuất từ 10 lao động</li>
+          <li>Kho bãi, logistics</li>
+          <li>Bệnh viện, phòng khám</li>
+          <li>Trường học từ cấp tiểu học</li>
+          <li>Khu vui chơi, thể thao, sự kiện</li>
+        </ul>
+        <div class="tip-box">💡 <strong>Điểm chốt khi bán B2B:</strong> Phạt vi phạm an toàn lao động từ 5–50 triệu đồng. Chi phí mua túi sơ cứu Safer+ chỉ 300K–5M — rẻ hơn nhiều so với tiền phạt và rủi ro pháp lý.</div>
+      ` },
+      { title: '📋 Quy định nội dung tủ sơ cứu tối thiểu', content: `
+        <p style="line-height:1.8;margin-bottom:12px">Theo hướng dẫn của Bộ Y tế, tủ/túi sơ cứu tối thiểu phải có:</p>
+        <table class="spec-table">
+          <tr><th>Vật tư</th><th>Số lượng tối thiểu</th><th>Ghi chú</th></tr>
+          <tr><td>Băng vô khuẩn</td><td>5 cuộn</td><td>Cỡ 5×200cm và 10×200cm</td></tr>
+          <tr><td>Gạc vô khuẩn</td><td>5 gói</td><td>Cỡ 10×10cm</td></tr>
+          <tr><td>Băng dính y tế</td><td>1 cuộn</td><td>3×500cm</td></tr>
+          <tr><td>Kéo y tế</td><td>1 cái</td><td>Đầu tù</td></tr>
+          <tr><td>Găng tay cao su</td><td>2 đôi</td><td>Không latex nếu có thể</td></tr>
+          <tr><td>Cồn 70°</td><td>1 chai 100ml</td><td>Sát khuẩn</td></tr>
+          <tr><td>Paracetamol 500mg</td><td>1 hộp</td><td>Giảm đau, hạ sốt</td></tr>
+          <tr><td>Nhiệt kế</td><td>1 cái</td><td>Thủy ngân hoặc điện tử</td></tr>
+        </table>
+        <div class="law-box">⚠️ Vật tư có hạn sử dụng (cồn, thuốc, gạc) phải kiểm tra và thay định kỳ. Đây là lý do cần <strong>Refill Kit SA-FA-005</strong> mỗi 3–6 tháng.</div>
+      ` },
+    ]
+  },
+  elderly: {
+    label: '👴 Elderly Care', icon: '👴',
+    hero: 'Kiến thức sản phẩm Chăm sóc người cao tuổi',
+    heroSub: 'Việt Nam có hơn 12 triệu người cao tuổi — thị trường Elderly Care đang tăng trưởng nhanh nhất.',
+    sections: [
+      { title: '📊 Thị trường Elderly Care tại Việt Nam', content: `
+        <p style="line-height:1.8;margin-bottom:10px">Việt Nam đang bước vào giai đoạn <strong>già hóa dân số nhanh nhất Đông Nam Á</strong>. Đến 2030, tỷ lệ người trên 65 tuổi chiếm >14% dân số (xã hội già).</p>
+        <table class="spec-table">
+          <tr><th>Chỉ số</th><th>Số liệu</th></tr>
+          <tr><td>Người cao tuổi (60+)</td><td>~12,5 triệu người (2024)</td></tr>
+          <tr><td>Tốc độ tăng trưởng</td><td>~3.4%/năm</td></tr>
+          <tr><td>Chi tiêu y tế/người cao tuổi</td><td>Cao gấp 7-8 lần người trẻ</td></tr>
+          <tr><td>Xu hướng</td><td>Chăm sóc tại nhà, không muốn vào viện dưỡng lão</td></tr>
+        </table>
+        <div class="tip-box">🎯 <strong>Target buyer:</strong> Con cái (30–50 tuổi) mua cho bố mẹ. Bán qua Shopee, TikTok, Facebook với nội dung "quà tặng bố mẹ", "chăm sóc gia đình".</div>
+      ` },
+      { title: '💓 SA-EC-001/002 — Máy đo huyết áp (Best Seller)', content: `
+        <div class="tip-box">⭐ <strong>Best seller của dòng Elderly Care!</strong> Huyết áp cao là bệnh mãn tính phổ biến nhất ở người cao tuổi VN — >40% người trên 60 mắc.</div>
+        <table class="spec-table">
+          <tr><th>Model</th><th>SA-EC-001 (Bắp tay)</th><th>SA-EC-002 (Cổ tay)</th></tr>
+          <tr><td>Ưu điểm</td><td>Chính xác hơn, y tế chuẩn</td><td>Compact, tiện mang theo</td></tr>
+          <tr><td>Đối tượng</td><td>Gia đình, theo dõi thường xuyên</td><td>Đi công tác, du lịch</td></tr>
+          <tr><td>Giá tham khảo</td><td>850,000₫</td><td>650,000₫</td></tr>
+          <tr><td>Upsell</td><td>SA-EC-003 (đo đường huyết)</td><td>SA-EC-004 (SpO2)</td></tr>
+        </table>
+        <p style="line-height:1.8;margin-top:10px"><strong>Điểm kỹ thuật cần biết:</strong> Máy đo bắp tay chính xác hơn cổ tay vì đo gần tim hơn. Khuyến cáo đo buổi sáng khi thức dậy, ngồi nghỉ 5 phút trước khi đo. Chỉ số bình thường: dưới 120/80 mmHg.</p>
+        <div class="law-box">💬 <strong>Script bán hàng:</strong> "Máy đo huyết áp Safer+ cho kết quả chính xác như máy tại bệnh viện, dễ dùng không cần hỗ trợ. Bố/mẹ anh/chị có thể tự đo mỗi ngày để theo dõi sức khoẻ."</div>
+      ` },
+      { title: '🩸 SA-EC-003 — Máy đo đường huyết + que thử', content: `
+        <p style="line-height:1.8;margin-bottom:10px">Đái tháo đường type 2 ảnh hưởng >5 triệu người VN. Người bệnh cần đo đường huyết <strong>2–4 lần/ngày</strong> — đây là recurring revenue cao nhất (que thử).</p>
+        <table class="spec-table">
+          <tr><th>Thành phần</th><th>Chi tiết</th></tr>
+          <tr><td>Máy đo</td><td>Kết quả trong 5 giây, màn hình lớn dễ đọc</td></tr>
+          <tr><td>Que thử</td><td>Kèm 25 que (dùng trong ~1–2 tuần)</td></tr>
+          <tr><td>Lancet (kim chích)</td><td>Không đau, đầu kim cực nhỏ</td></tr>
+        </table>
+        <div class="tip-box">📦 <strong>Upsell tiếp theo:</strong> Bán bổ sung que thử SA-EC-003 refill mỗi 2–4 tuần. Đây là model "máy in + mực in" — máy rẻ nhưng que thử là recurring.</div>
+        <p style="line-height:1.8;margin-top:8px"><strong>Chỉ số tham khảo:</strong> Đường huyết lúc đói bình thường: 4–6 mmol/L. Sau ăn 2h: dưới 7.8 mmol/L.</p>
+      ` },
+      { title: '🫁 SA-EC-004 — Máy đo SpO2 kẹp ngón tay', content: `
+        <p style="line-height:1.8;margin-bottom:10px">Đo độ bão hòa oxy trong máu (SpO2) và nhịp tim. Cực quan trọng cho người có bệnh phổi, tim mạch, hoặc hậu COVID.</p>
+        <table class="spec-table">
+          <tr><th>Chỉ số</th><th>Ý nghĩa</th></tr>
+          <tr><td>SpO2 ≥ 95%</td><td>Bình thường</td></tr>
+          <tr><td>SpO2 90–94%</td><td>Cần chú ý, theo dõi</td></tr>
+          <tr><td>SpO2 &lt; 90%</td><td>Nguy hiểm — cần nhập viện ngay</td></tr>
+        </table>
+        <div class="tip-box">💡 Sau đại dịch COVID-19, nhu cầu máy SpO2 tăng mạnh. Bán kèm với máy đo huyết áp như "bộ theo dõi sức khoẻ toàn diện" → tăng giá trị đơn hàng.</div>
+      ` },
+      { title: '🌡️ SA-EC-005 — Nhiệt kế điện tử', content: `
+        <p style="line-height:1.8;margin-bottom:10px">Nhiệt kế điện tử đầu mềm, an toàn hơn nhiệt kế thủy ngân (hiện bị hạn chế sử dụng tại nhiều nước). Kết quả trong 60 giây.</p>
+        <div class="tip-box">🎯 <strong>Bundle idea:</strong> "Bộ theo dõi sức khoẻ cơ bản" = SA-EC-001 + SA-EC-004 + SA-EC-005 → giảm 15% so với mua lẻ. Tăng AOV hiệu quả.</div>
+      ` },
+      { title: '💆 SA-EC-006/007 — Máy massage', content: `
+        <table class="spec-table">
+          <tr><th>Model</th><th>SA-EC-006 (Vai gáy)</th><th>SA-EC-007 (Chân/Toàn thân)</th></tr>
+          <tr><td>Cơ chế</td><td>Hồng ngoại + massage 3D</td><td>EMS + rung động</td></tr>
+          <tr><td>Lợi ích</td><td>Giảm đau cổ vai gáy, thoái hoá đốt sống</td><td>Tuần hoàn máu chân, giảm phù</td></tr>
+          <tr><td>Target</td><td>Dân văn phòng + người cao tuổi</td><td>Người đứng nhiều, tiểu đường</td></tr>
+          <tr><td>Content hook</td><td>"Spa tại nhà"</td><td>"Chăm sóc ba/mẹ sau bữa tối"</td></tr>
+        </table>
+      ` },
+      { title: '🩺 SA-EC-009 — Vớ y khoa chống giãn tĩnh mạch', content: `
+        <p style="line-height:1.8;margin-bottom:10px">Vớ áp lực gradient y khoa giúp ngăn ngừa suy giãn tĩnh mạch — bệnh rất phổ biến ở phụ nữ mang thai, người đứng nhiều, người cao tuổi.</p>
+        <table class="spec-table">
+          <tr><th>Mức áp lực</th><th>Chỉ định</th></tr>
+          <tr><td>15–20 mmHg</td><td>Phòng ngừa, sưng phù nhẹ</td></tr>
+          <tr><td>20–30 mmHg</td><td>Giãn tĩnh mạch độ 1–2, thai kỳ</td></tr>
+          <tr><td>30–40 mmHg</td><td>Giãn tĩnh mạch nặng (cần tư vấn bác sĩ)</td></tr>
+        </table>
+        <div class="tip-box">🎯 Target: Phụ nữ 35–55, tiếp viên hàng không, giáo viên, y tá, nhân viên bán lẻ. Content TikTok về "chân mỏi sau 8 tiếng đứng" hiệu quả cao.</div>
+      ` },
+      { title: '🎁 SA-EC-012 — Bộ sơ cứu gia đình người cao tuổi (Bundle)', content: `
+        <p style="line-height:1.8;margin-bottom:10px">Bundle cao cấp kết hợp First Aid + Elderly Care — sản phẩm quà tặng lý tưởng cho dịp Tết, sinh nhật, Ngày Cha Mẹ.</p>
+        <div class="tip-box">🎁 <strong>Marketing angle:</strong> "Món quà ý nghĩa nhất tặng bố mẹ — không phải quần áo hay bánh kẹo, mà là sức khoẻ và an toàn." → AOV cao nhất trong catalog, margin tốt.</div>
+        <table class="spec-table">
+          <tr><th>Thành phần gợi ý</th><th></th></tr>
+          <tr><td>SA-EC-001</td><td>Máy đo huyết áp bắp tay</td></tr>
+          <tr><td>SA-EC-004</td><td>Máy đo SpO2</td></tr>
+          <tr><td>SA-EC-005</td><td>Nhiệt kế điện tử</td></tr>
+          <tr><td>SA-FA-001</td><td>Túi sơ cứu cơ bản</td></tr>
+        </table>
+      ` },
+    ]
+  }
+};
+
+let kbActiveTab = 'firstaid';
+function renderKnowledge() {
+  document.getElementById('content').innerHTML = `
+    <div class="kb-tabs">
+      <button class="kb-tab ${kbActiveTab==='firstaid'?'active':''}" onclick="switchKbTab('firstaid')">🩺 First Aid</button>
+      <button class="kb-tab ${kbActiveTab==='law'?'active':''}" onclick="switchKbTab('law')">⚖️ Pháp luật</button>
+      <button class="kb-tab ${kbActiveTab==='elderly'?'active':''}" onclick="switchKbTab('elderly')">👴 Elderly Care</button>
+    </div>
+    <div id="kb-content"></div>
+  `;
+  renderKbSection();
+}
+
+function switchKbTab(tab) {
+  kbActiveTab = tab;
+  document.querySelectorAll('.kb-tab').forEach(b=>b.classList.toggle('active', b.textContent.trim().startsWith(KB_CONTENT[tab].icon)));
+  renderKbSection();
+}
+
+function renderKbSection() {
+  const kb = KB_CONTENT[kbActiveTab];
+  document.getElementById('kb-content').innerHTML = `
+    <div class="kb-hero">
+      <h2>${kb.hero}</h2>
+      <p>${kb.heroSub}</p>
+    </div>
+    ${kb.sections.map((s,i)=>`
+      <div class="accordion">
+        <div class="acc-header ${i===0?'open':''}" onclick="toggleAcc(this)">${s.title} <span style="font-size:18px;margin-left:auto">${i===0?'▲':'▼'}</span></div>
+        <div class="acc-body ${i===0?'open':''}">${s.content}</div>
+      </div>
+    `).join('')}
+  `;
+}
+
+function toggleAcc(header) {
+  const body = header.nextElementSibling;
+  const isOpen = body.classList.contains('open');
+  // Close all in same parent
+  header.closest('#kb-content').querySelectorAll('.acc-header').forEach(h=>{h.classList.remove('open');h.querySelector('span').textContent='▼';});
+  header.closest('#kb-content').querySelectorAll('.acc-body').forEach(b=>b.classList.remove('open'));
+  if(!isOpen) { header.classList.add('open'); header.querySelector('span').textContent='▲'; body.classList.add('open'); }
+}
+
+// ============================================================
+// PHOTO LIBRARY
+// ============================================================
+const PHOTO_DATA = [
+  { code:'SA-FA-001', name:'Túi sơ cứu cơ bản cá nhân',          emoji:'🧰', bg:'#FFF0F0', tags:['First Aid','B2C','Cơ bản'] },
+  { code:'SA-FA-002', name:'Túi sơ cứu văn phòng / doanh nghiệp',emoji:'🏢', bg:'#FFF7ED', tags:['First Aid','B2B','Văn phòng'] },
+  { code:'SA-FA-003', name:'Túi sơ cứu xe hơi / phương tiện',    emoji:'🚗', bg:'#FFFBEB', tags:['First Aid','B2C','Xe hơi'] },
+  { code:'SA-FA-004', name:'Túi sơ cứu dã ngoại / thể thao',     emoji:'⛺', bg:'#F0FFF4', tags:['First Aid','B2C','Outdoor'] },
+  { code:'SA-FA-005', name:'Bộ bổ sung / Refill Kit',             emoji:'🔄', bg:'#EBF8FF', tags:['First Aid','Refill','B2C'] },
+  { code:'SA-FA-006', name:'Túi sơ cứu tiêu chuẩn PCCC / ISO',   emoji:'🏭', bg:'#FFF5F5', tags:['First Aid','B2B','PCCC'] },
+  { code:'SA-EC-001', name:'Máy đo huyết áp bắp tay',             emoji:'💓', bg:'#EBF8FF', tags:['Elderly','Best Seller','B2C'] },
+  { code:'SA-EC-002', name:'Máy đo huyết áp cổ tay',              emoji:'⌚', bg:'#F0F9FF', tags:['Elderly','Compact','B2C'] },
+  { code:'SA-EC-003', name:'Máy đo đường huyết + que thử',        emoji:'🩸', bg:'#FFF0F0', tags:['Elderly','Recurring','B2C'] },
+  { code:'SA-EC-004', name:'Máy đo SpO2 kẹp ngón tay',            emoji:'🫁', bg:'#F0FFF4', tags:['Elderly','SpO2','B2C'] },
+  { code:'SA-EC-005', name:'Nhiệt kế điện tử',                    emoji:'🌡️', bg:'#FFFBEB', tags:['Elderly','Cơ bản','B2C'] },
+  { code:'SA-EC-006', name:'Máy massage vai gáy',                  emoji:'💆', bg:'#F5F3FF', tags:['Elderly','Massage','B2C'] },
+  { code:'SA-EC-007', name:'Máy massage chân / toàn thân',         emoji:'🦶', bg:'#FDF4FF', tags:['Elderly','Massage','B2C'] },
+  { code:'SA-EC-008', name:'Gậy đi bộ / khung tập đi',            emoji:'🦯', bg:'#F7FAFC', tags:['Elderly','Hỗ trợ','B2C'] },
+  { code:'SA-EC-009', name:'Vớ y khoa chống giãn tĩnh mạch',      emoji:'🧦', bg:'#EBF8FF', tags:['Elderly','Y khoa','B2C'] },
+  { code:'SA-EC-010', name:'Tã người lớn / miếng lót chống thấm', emoji:'🛡️', bg:'#F0FFF4', tags:['Elderly','Tiêu hao','B2C'] },
+  { code:'SA-EC-011', name:'Thiết bị hỗ trợ ngủ',                 emoji:'😴', bg:'#FFF7ED', tags:['Elderly','Ngủ','B2C'] },
+  { code:'SA-EC-012', name:'Bộ sơ cứu gia đình người cao tuổi',   emoji:'🎁', bg:'#FFFAF0', tags:['Elderly','Bundle','B2C'] },
+];
+
+let photoFilter = 'all';
+function renderPhotos() {
+  const filtered = photoFilter==='all' ? PHOTO_DATA : PHOTO_DATA.filter(p=>p.code.startsWith(photoFilter));
+  document.getElementById('content').innerHTML = `
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap">
+      <span style="font-weight:700;font-size:15px">📸 Photo Library — Sản phẩm Safer+</span>
+      <div style="margin-left:auto;display:flex;gap:8px">
+        <button class="kb-tab ${photoFilter==='all'?'active':''}" onclick="photoFilter='all';renderPhotos()">Tất cả (${PHOTO_DATA.length})</button>
+        <button class="kb-tab ${photoFilter==='SA-FA'?'active':''}" onclick="photoFilter='SA-FA';renderPhotos()">🩺 First Aid</button>
+        <button class="kb-tab ${photoFilter==='SA-EC'?'active':''}" onclick="photoFilter='SA-EC';renderPhotos()">👴 Elderly Care</button>
+      </div>
+    </div>
+    <div class="photo-grid">
+      ${filtered.map(p=>`
+        <div class="photo-card" onclick="showPhotoDetail('${p.code}')">
+          <div class="photo-thumb" style="background:${p.bg}">
+            <span style="font-size:56px">${p.emoji}</span>
+            <span class="pcode-tag">${p.code}</span>
+          </div>
+          <div class="photo-info">
+            <div class="pname">${p.name}</div>
+            <div class="ptags">${p.tags.map(t=>`<span class="badge" style="background:#F7FAFC;color:#374151;font-size:10px">${t}</span>`).join('')}</div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+    <p style="margin-top:16px;font-size:12px;color:var(--text-muted);text-align:center">
+      💡 Bấm vào sản phẩm để xem thông tin chi tiết và điểm bán hàng
+    </p>
+  `;
+}
+
+function showPhotoDetail(code) {
+  const p = PHOTO_DATA.find(x=>x.code===code);
+  const prod = PRODUCTS.find(x=>x.code===code);
+  if(!p||!prod) return;
+  const orders = loadData('orders').filter(o=>o.productCode===code);
+  const totalQty = orders.reduce((s,o)=>s+o.quantity,0);
+  const totalRev = orders.reduce((s,o)=>s+o.total,0);
+  const body = `
+    <div style="text-align:center;padding:24px 0 16px;background:${p.bg};border-radius:10px;margin-bottom:16px">
+      <div style="font-size:72px;margin-bottom:8px">${p.emoji}</div>
+      <div style="font-family:monospace;font-size:13px;font-weight:700;color:var(--primary)">${p.code}</div>
+    </div>
+    <div class="form-row single">
+      <table class="spec-table">
+        <tr><td style="color:var(--text-muted);width:140px">Tên sản phẩm</td><td><strong>${prod.name}</strong></td></tr>
+        <tr><td style="color:var(--text-muted)">Dòng sản phẩm</td><td>${lineBadge(prod.line)}</td></tr>
+        <tr><td style="color:var(--text-muted)">Đối tượng</td><td>${typeBadge(prod.target==='B2B'?'Doanh nghiệp':'Cá nhân')} ${prod.target==='Both'?'/ <span class="badge badge-b2b">🏢 B2B</span>':''}</td></tr>
+        <tr><td style="color:var(--text-muted)">Mô tả</td><td>${prod.desc}</td></tr>
+        <tr><td style="color:var(--text-muted)">Đã bán (system)</td><td>${totalQty} sản phẩm · ${fmtMoney(totalRev)}</td></tr>
+        <tr><td style="color:var(--text-muted)">Tags</td><td>${p.tags.map(t=>`<span class="badge" style="background:#F7FAFC;color:#374151">${t}</span>`).join(' ')}</td></tr>
+      </table>
+    </div>
+  `;
+  showModal(`📸 ${prod.name}`, body, null);
+  setTimeout(()=>{
+    const f=document.querySelector('.modal-footer');
+    if(f) f.innerHTML=`<button class="btn btn-outline" onclick="closeModal()">Đóng</button>`;
+  },50);
+}
+
+// ============================================================
 // ROUTER
 // ============================================================
-function renderPage(p) { ({dashboard:renderDashboard,customers:renderCustomers,orders:renderOrders,products:renderProducts,channels:renderChannels,refill:renderRefill}[p]||renderDashboard)(); }
+function renderPage(p) {
+  ({dashboard:renderDashboard,customers:renderCustomers,orders:renderOrders,
+    products:renderProducts,channels:renderChannels,refill:renderRefill,
+    knowledge:renderKnowledge,photos:renderPhotos,settings:renderSettings
+  }[p]||renderDashboard)();
+}
 
 // ============================================================
 // INIT
 // ============================================================
 document.addEventListener('DOMContentLoaded',()=>{
   seedData();
+  // Apply saved theme
+  const savedTheme = localStorage.getItem('safer2_theme') || 'teal';
+  applyTheme(savedTheme, false);
   document.getElementById('topbar-date').textContent=new Date().toLocaleDateString('vi-VN',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  updateRefillBadge();
   renderDashboard();
+  // Close sidebar on mobile nav clicks
+  document.querySelectorAll('.nav-item').forEach(el=>{
+    el.addEventListener('click',()=>{ if(window.innerWidth<=820) closeSidebar(); });
+  });
 });
 </script>
 </body>
