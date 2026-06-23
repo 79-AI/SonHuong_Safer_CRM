@@ -1,0 +1,1613 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Safer+ CRM — Y tế Sơn Hương</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --primary: #00A6A6; --primary-dark: #007E7E; --primary-light: #E0F7F7;
+    --accent: #E74C3C; --success: #27AE60; --warning: #F39C12; --info: #2980B9;
+    --b2b: #7C3AED; --b2c: #0EA5E9;
+    --bg: #F0F4F8; --card: #FFFFFF; --border: #E2E8F0;
+    --text: #1A202C; --text-muted: #718096; --sidebar-w: 220px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; }
+  #app { display: flex; min-height: 100vh; }
+
+  /* SIDEBAR */
+  #sidebar { width: var(--sidebar-w); background: #0D2B35; position: fixed; top: 0; left: 0; height: 100vh; display: flex; flex-direction: column; z-index: 100; }
+  .sidebar-logo { padding: 20px 16px 16px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+  .sidebar-logo h1 { color: #00D4D4; font-size: 20px; font-weight: 700; letter-spacing: 1px; }
+  .sidebar-logo span { color: rgba(255,255,255,0.5); font-size: 11px; display: block; margin-top: 2px; }
+  .sidebar-nav { padding: 12px 0; flex: 1; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 16px; color: rgba(255,255,255,0.65); cursor: pointer; transition: all 0.2s; border-left: 3px solid transparent; font-size: 13.5px; }
+  .nav-item:hover { background: rgba(255,255,255,0.06); color: #fff; }
+  .nav-item.active { background: rgba(0,166,166,0.2); color: #00D4D4; border-left-color: #00D4D4; }
+  .nav-item .icon { font-size: 16px; width: 20px; text-align: center; }
+  .sidebar-footer { padding: 12px 16px; border-top: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.35); font-size: 11px; }
+
+  /* MAIN */
+  #main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
+  #topbar { background: white; border-bottom: 1px solid var(--border); padding: 0 24px; height: 56px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
+  #topbar h2 { font-size: 16px; font-weight: 600; color: var(--text); }
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+  #content { padding: 24px; flex: 1; }
+
+  /* GRIDS */
+  .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }
+  .kpi-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .grid-3-1 { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
+
+  /* KPI CARDS */
+  .kpi-card { background: var(--card); border-radius: 12px; padding: 18px 20px; border: 1px solid var(--border); display: flex; align-items: center; gap: 14px; }
+  .kpi-icon { width: 46px; height: 46px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+  .kpi-card h3 { font-size: 22px; font-weight: 700; margin-bottom: 2px; }
+  .kpi-card p { font-size: 12px; color: var(--text-muted); }
+  .kpi-card .trend { font-size: 11px; margin-top: 4px; font-weight: 500; }
+  .trend.up { color: var(--success); } .trend.down { color: var(--accent); } .trend.neutral { color: var(--text-muted); }
+
+  /* CARD */
+  .card { background: var(--card); border-radius: 12px; border: 1px solid var(--border); overflow: hidden; margin-bottom: 16px; }
+  .card:last-child { margin-bottom: 0; }
+  .card-header { padding: 14px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .card-header h3 { font-size: 14px; font-weight: 600; }
+  .card-body { padding: 20px; }
+
+  /* TABLES */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  th { background: #F7FAFC; padding: 9px 12px; text-align: left; font-size: 11px; font-weight: 700; color: var(--text-muted); border-bottom: 1px solid var(--border); white-space: nowrap; text-transform: uppercase; letter-spacing: 0.3px; }
+  td { padding: 9px 12px; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #FAFBFC; }
+
+  /* BADGES */
+  .badge { display: inline-block; padding: 3px 8px; border-radius: 20px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+  /* Status */
+  .badge-lead { background: #EBF8FF; color: #2B6CB0; }
+  .badge-active { background: #F0FFF4; color: #276749; }
+  .badge-vip { background: #FFFAF0; color: #C05621; }
+  .badge-inactive { background: #F7FAFC; color: #718096; }
+  .badge-lost { background: #FFF5F5; color: #C53030; }
+  /* Order status */
+  .badge-confirmed { background: #EBF8FF; color: #2B6CB0; }
+  .badge-paid { background: #F0FFF4; color: #276749; }
+  .badge-shipped { background: #FFFAF0; color: #744210; }
+  .badge-completed { background: #F0FFF4; color: #22543D; }
+  .badge-cancelled { background: #FFF5F5; color: #C53030; }
+  .badge-quoted { background: #FAF5FF; color: #553C9A; }
+  .badge-refunded { background: #FFF5F5; color: #9B2335; }
+  /* Channels */
+  .badge-shopee { background: #FFF0E6; color: #EE4D2D; }
+  .badge-lazada { background: #F3E8FF; color: #7C3AED; }
+  .badge-tiktok { background: #ECFDF5; color: #065F46; }
+  .badge-facebook { background: #EFF6FF; color: #1D4ED8; }
+  .badge-alibaba { background: #FFF7ED; color: #C2410C; }
+  .badge-youtube { background: #FFF5F5; color: #B91C1C; }
+  .badge-email { background: #F7FAFC; color: #374151; }
+  .badge-zalo { background: #EFF6FF; color: #1849A9; }
+  /* Product lines */
+  .badge-firstaid { background: #FFF0F0; color: #C53030; }
+  .badge-elderlycare { background: #EBF8FF; color: #2B6CB0; }
+  /* B2B / B2C */
+  .badge-b2b { background: #F5F3FF; color: #6D28D9; border: 1px solid #DDD6FE; }
+  .badge-b2c { background: #F0F9FF; color: #0369A1; border: 1px solid #BAE6FD; }
+
+  /* BUTTONS */
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; border: 1px solid transparent; transition: all 0.15s; line-height: 1; }
+  .btn-primary { background: var(--primary); color: white; }
+  .btn-primary:hover { background: var(--primary-dark); }
+  .btn-outline { background: white; color: var(--text); border-color: var(--border); }
+  .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+  .btn-sm { padding: 5px 10px; font-size: 12px; }
+  .btn-danger { background: var(--accent); color: white; }
+  .btn-danger:hover { background: #c0392b; }
+  .btn-icon { padding: 6px; background: transparent; border: none; cursor: pointer; color: var(--text-muted); border-radius: 6px; font-size: 14px; }
+  .btn-icon:hover { background: var(--bg); color: var(--primary); }
+
+  /* FORM */
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .form-row.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .form-row.single { grid-template-columns: 1fr; }
+  .form-group { display: flex; flex-direction: column; gap: 5px; }
+  .form-group label { font-size: 12px; font-weight: 600; color: var(--text-muted); }
+  .form-control { padding: 9px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; color: var(--text); outline: none; transition: border-color 0.15s; background: white; width: 100%; }
+  .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,166,166,0.1); }
+  .form-control::placeholder { color: #CBD5E0; }
+  select.form-control { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23718096' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 30px; }
+
+  /* MODAL */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(2px); }
+  .modal { background: white; border-radius: 16px; width: 600px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+  .modal-header { padding: 20px 24px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: white; z-index: 1; }
+  .modal-header h3 { font-size: 16px; font-weight: 700; }
+  .modal-body { padding: 20px 24px; }
+  .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; }
+  .close-btn { background: none; border: none; cursor: pointer; font-size: 20px; color: var(--text-muted); line-height: 1; }
+  .close-btn:hover { color: var(--text); }
+
+  /* TOOLBAR */
+  .toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+  .search-box { position: relative; flex: 1; min-width: 200px; }
+  .search-box input { padding-left: 34px; }
+  .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 14px; }
+
+  /* PROGRESS */
+  .progress-bar { height: 6px; background: var(--bg); border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 3px; transition: width 0.5s; }
+
+  /* RANK BADGE */
+  .rank-badge { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; font-size: 11px; font-weight: 700; }
+  .rank-1 { background: #FFD700; color: #7A5800; } .rank-2 { background: #C0C0C0; color: #505050; } .rank-3 { background: #CD7F32; color: white; } .rank-n { background: var(--bg); color: var(--text-muted); }
+
+  /* EMPTY STATE */
+  .empty-state { text-align: center; padding: 48px 20px; color: var(--text-muted); }
+  .empty-state .emoji { font-size: 40px; margin-bottom: 12px; }
+  .empty-state h4 { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+
+  /* DIVIDER */
+  .section-divider { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; padding: 4px 0 10px; border-bottom: 1px solid var(--border); margin-bottom: 14px; }
+
+  /* STAT SPLIT */
+  .split-stat { display: flex; gap: 0; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); margin-bottom: 14px; }
+  .split-half { flex: 1; padding: 14px 16px; text-align: center; }
+  .split-half h4 { font-size: 22px; font-weight: 700; }
+  .split-half p { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .split-half.b2b { background: #F5F3FF; border-right: 1px solid var(--border); }
+  .split-half.b2c { background: #F0F9FF; }
+  .split-half.b2b h4 { color: #6D28D9; }
+  .split-half.b2c h4 { color: #0369A1; }
+
+  /* ORDER PIPELINE STEPPER */
+  .pipeline-wrap { display: flex; gap: 0; overflow-x: auto; margin-bottom: 20px; }
+  .pipe-stage { flex: 1; min-width: 100px; padding: 12px 8px; text-align: center; background: white; border: 1px solid var(--border); border-right: none; cursor: pointer; transition: all 0.15s; }
+  .pipe-stage:first-child { border-radius: 10px 0 0 10px; }
+  .pipe-stage:last-child { border-radius: 0 10px 10px 0; border-right: 1px solid var(--border); }
+  .pipe-stage:hover { background: var(--primary-light); }
+  .pipe-stage.active { background: var(--primary); color: white; border-color: var(--primary); }
+  .pipe-stage.active .pipe-count { color: rgba(255,255,255,0.8); }
+  .pipe-stage .pipe-label { font-size: 11px; font-weight: 600; margin-bottom: 4px; }
+  .pipe-stage .pipe-count { font-size: 20px; font-weight: 700; }
+  .pipe-stage .pipe-rev { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+  .pipe-stage.active .pipe-rev { color: rgba(255,255,255,0.7); }
+  /* New status badges */
+  .badge-donggoi { background: #FFF7ED; color: #9A3412; }
+  .badge-danggiao { background: #EFF6FF; color: #1D4ED8; }
+  .badge-dagiao { background: #ECFDF5; color: #065F46; }
+  .badge-hoantthanh { background: #F0FFF4; color: #22543D; }
+  .badge-huyddon { background: #FFF5F5; color: #C53030; }
+  .badge-hoantra { background: #FDF4FF; color: #86198F; }
+
+  /* REFILL PAGE */
+  .refill-config { display: flex; align-items: center; gap: 12px; background: white; border: 1px solid var(--border); border-radius: 10px; padding: 14px 18px; margin-bottom: 20px; }
+  .refill-config label { font-size: 13px; font-weight: 600; color: var(--text-muted); white-space: nowrap; }
+  .cycle-btn { padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border); background: white; font-size: 12px; font-weight: 600; cursor: pointer; }
+  .cycle-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+  .urgency-overdue { color: #C53030; font-weight: 700; }
+  .urgency-soon { color: #C05621; font-weight: 600; }
+  .urgency-ok { color: #276749; font-weight: 500; }
+  .refill-msg-box { background: #F7FAFC; border: 1px solid var(--border); border-radius: 8px; padding: 14px; font-size: 13px; line-height: 1.6; white-space: pre-wrap; font-family: inherit; width: 100%; min-height: 120px; resize: vertical; }
+  .channel-tabs { display: flex; gap: 8px; margin-bottom: 12px; }
+  .ch-tab { padding: 6px 14px; border-radius: 6px; border: 1px solid var(--border); background: white; font-size: 12px; font-weight: 600; cursor: pointer; }
+  .ch-tab.active { background: var(--primary); color: white; border-color: var(--primary); }
+  .badge-refill-done { background: #F0FFF4; color: #22543D; border: 1px solid #C6F6D5; }
+  .badge-refill-pending { background: #FFF5F5; color: #C53030; border: 1px solid #FED7D7; }
+  .badge-refill-soon { background: #FFFAF0; color: #C05621; border: 1px solid #FEEBC8; }
+  .refill-done-row td { background: #F9FFFB !important; opacity: 0.82; }
+
+  /* PRODUCT CARD */
+  .product-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .product-card { background: white; border: 1px solid var(--border); border-radius: 10px; padding: 14px; transition: box-shadow 0.2s; cursor: default; }
+  .product-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); border-color: var(--primary); }
+  .product-card .pcode { font-family: monospace; font-size: 11px; color: var(--primary); margin-bottom: 6px; font-weight: 600; }
+  .product-card .pname { font-size: 13px; font-weight: 600; line-height: 1.4; margin-bottom: 8px; }
+  .product-card .pmeta { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+  .product-card .psales { font-size: 11px; color: var(--text-muted); border-top: 1px solid var(--border); padding-top: 8px; display: flex; justify-content: space-between; align-items: center; }
+
+  /* TOAST */
+  #toast { position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
+  .toast-item { background: #1A202C; color: white; padding: 12px 16px; border-radius: 10px; font-size: 13px; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); animation: slideIn 0.3s ease; max-width: 300px; }
+  .toast-success { border-left: 3px solid var(--success); } .toast-error { border-left: 3px solid var(--accent); }
+  @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+  /* CONFIRM */
+  .confirm-dialog { width: 360px; }
+  .confirm-dialog .modal-body { text-align: center; padding: 28px 24px; }
+  .confirm-dialog .confirm-icon { font-size: 40px; margin-bottom: 12px; }
+
+  .hidden { display: none !important; }
+  .chart-container { position: relative; }
+  #modal-container { position: fixed; inset: 0; z-index: 998; pointer-events: none; }
+  #modal-container .modal-overlay { pointer-events: all; }
+
+  @media (max-width: 1200px) { .kpi-grid { grid-template-columns: repeat(2,1fr); } .grid-2 { grid-template-columns: 1fr; } .product-grid { grid-template-columns: repeat(2,1fr); } }
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="sidebar">
+    <div class="sidebar-logo">
+      <h1>SAFER+</h1>
+      <span>Y tế Sơn Hương · CRM v2.0</span>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-item active" onclick="navigate('dashboard')" id="nav-dashboard"><span class="icon">📊</span> Dashboard</div>
+      <div class="nav-item" onclick="navigate('customers')" id="nav-customers"><span class="icon">👥</span> Khách hàng</div>
+      <div class="nav-item" onclick="navigate('orders')" id="nav-orders"><span class="icon">🛒</span> Đơn hàng</div>
+      <div class="nav-item" onclick="navigate('products')" id="nav-products"><span class="icon">📦</span> Sản phẩm</div>
+      <div class="nav-item" onclick="navigate('channels')" id="nav-channels"><span class="icon">📡</span> Báo cáo kênh</div>
+      <div class="nav-item" onclick="navigate('refill')" id="nav-refill"><span class="icon">🔔</span> Nhắc Refill <span id="refill-badge" style="margin-left:auto;background:#E74C3C;color:white;font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px;display:none">0</span></div>
+    </nav>
+    <div class="sidebar-footer">Safer+ CRM · June 2026</div>
+  </div>
+
+  <div id="main">
+    <div id="topbar">
+      <h2 id="page-title">Dashboard</h2>
+      <div class="topbar-right">
+        <span id="topbar-date" style="color:var(--text-muted);font-size:12px;"></span>
+        <button class="btn btn-primary" id="topbar-cta" onclick="topbarAction()">
+          <span>➕</span> <span id="topbar-cta-label">Thêm khách hàng</span>
+        </button>
+      </div>
+    </div>
+    <div id="content"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+<div id="modal-container"></div>
+
+<script>
+// ============================================================
+// CONSTANTS
+// ============================================================
+const VN_PROVINCES = ['An Giang','Bà Rịa - Vũng Tàu','Bạc Liêu','Bắc Giang','Bắc Kạn','Bắc Ninh','Bến Tre','Bình Định','Bình Dương','Bình Phước','Bình Thuận','Cà Mau','Cần Thơ','Cao Bằng','Đà Nẵng','Đắk Lắk','Đắk Nông','Điện Biên','Đồng Nai','Đồng Tháp','Gia Lai','Hà Giang','Hà Nam','Hà Nội','Hà Tĩnh','Hải Dương','Hải Phòng','Hậu Giang','Hoà Bình','Hưng Yên','Khánh Hoà','Kiên Giang','Kon Tum','Lai Châu','Lâm Đồng','Lạng Sơn','Lào Cai','Long An','Nam Định','Nghệ An','Ninh Bình','Ninh Thuận','Phú Thọ','Phú Yên','Quảng Bình','Quảng Nam','Quảng Ngãi','Quảng Ninh','Quảng Trị','Sóc Trăng','Sơn La','Tây Ninh','Thái Bình','Thái Nguyên','Thanh Hoá','Thừa Thiên Huế','Tiền Giang','TP. Hồ Chí Minh','Trà Vinh','Tuyên Quang','Vĩnh Long','Vĩnh Phúc','Yên Bái'];
+
+const PRODUCTS = [
+  { code:'SA-FA-001', name:'Túi sơ cứu cơ bản cá nhân', line:'First Aid', target:'B2C', desc:'Cá nhân, gia đình' },
+  { code:'SA-FA-002', name:'Túi sơ cứu văn phòng / doanh nghiệp', line:'First Aid', target:'B2B', desc:'Văn phòng, công ty' },
+  { code:'SA-FA-003', name:'Túi sơ cứu xe hơi / phương tiện', line:'First Aid', target:'B2C', desc:'Ô tô, xe máy' },
+  { code:'SA-FA-004', name:'Túi sơ cứu dã ngoại / thể thao', line:'First Aid', target:'B2C', desc:'Camping, hiking' },
+  { code:'SA-FA-005', name:'Bộ bổ sung / refill kit', line:'First Aid', target:'Both', desc:'Cá nhân & doanh nghiệp' },
+  { code:'SA-FA-006', name:'Túi sơ cứu tiêu chuẩn PCCC / ISO', line:'First Aid', target:'B2B', desc:'Nhà máy, bệnh viện' },
+  { code:'SA-EC-001', name:'Máy đo huyết áp bắp tay', line:'Elderly Care', target:'B2C', desc:'Best seller ⭐' },
+  { code:'SA-EC-002', name:'Máy đo huyết áp cổ tay', line:'Elderly Care', target:'B2C', desc:'Compact, tiện lợi' },
+  { code:'SA-EC-003', name:'Máy đo đường huyết + que thử', line:'Elderly Care', target:'B2C', desc:'Kèm 25 que thử' },
+  { code:'SA-EC-004', name:'Máy đo SpO2 kẹp ngón tay', line:'Elderly Care', target:'B2C', desc:'Đo oxy máu' },
+  { code:'SA-EC-005', name:'Nhiệt kế điện tử', line:'Elderly Care', target:'B2C', desc:'Đầu mềm, an toàn' },
+  { code:'SA-EC-006', name:'Máy massage vai gáy', line:'Elderly Care', target:'B2C', desc:'Hồng ngoại, 3 chế độ' },
+  { code:'SA-EC-007', name:'Máy massage chân / toàn thân', line:'Elderly Care', target:'B2C', desc:'Tuần hoàn máu' },
+  { code:'SA-EC-008', name:'Gậy đi bộ / khung tập đi (walker)', line:'Elderly Care', target:'B2C', desc:'Hỗ trợ vận động' },
+  { code:'SA-EC-009', name:'Vớ y khoa chống giãn tĩnh mạch', line:'Elderly Care', target:'B2C', desc:'Áp lực gradient' },
+  { code:'SA-EC-010', name:'Tã người lớn / miếng lót chống thấm', line:'Elderly Care', target:'B2C', desc:'Siêu thấm, mềm mại' },
+  { code:'SA-EC-011', name:'Thiết bị hỗ trợ ngủ', line:'Elderly Care', target:'B2C', desc:'Gối định hình, đèn trị liệu' },
+  { code:'SA-EC-012', name:'Bộ sơ cứu gia đình người cao tuổi', line:'Elderly Care', target:'Both', desc:'Bundle cao cấp' },
+];
+
+const CHANNELS = ['SHOPEE','LAZADA','ALIBABA','TIKTOK','FACEBOOK','YOUTUBE','EMAIL','ZALO'];
+const CUSTOMER_STATUSES = ['Lead','Active','VIP','Inactive','Lost'];
+const ORDER_STATUSES = ['Lead','Quoted','Confirmed','Paid','Đóng gói','Đang giao','Đã giao thành công','Hoàn thành','Huỷ đơn','Hoàn trả'];
+// Steps that appear in the pipeline (excluding terminal states)
+const PIPELINE_STEPS = ['Confirmed','Paid','Đóng gói','Đang giao','Đã giao thành công','Hoàn thành'];
+const PIPELINE_LABELS = {'Confirmed':'✅ Xác nhận','Paid':'💳 Đã TT','Đóng gói':'📦 Đóng gói','Đang giao':'🚚 Đang giao','Đã giao thành công':'🏠 Đã giao','Hoàn thành':'🎉 Xong'};
+const CH_COLORS = { SHOPEE:'#EE4D2D',LAZADA:'#9B59B6',TIKTOK:'#00C851',FACEBOOK:'#3B5998',ALIBABA:'#FF6A00',YOUTUBE:'#FF0000',EMAIL:'#95A5A6',ZALO:'#0068FF' };
+
+// ============================================================
+// DATA LAYER
+// ============================================================
+function loadData(key, def=[]) { try { return JSON.parse(localStorage.getItem('safer2_'+key)) || def; } catch { return def; } }
+function saveData(key, val) { localStorage.setItem('safer2_'+key, JSON.stringify(val)); }
+function genId(prefix) {
+  const existing = prefix==='CUS' ? loadData('customers') : loadData('orders');
+  const max = existing.reduce((m,x) => { const n=parseInt((x.id||'').split('-')[2]||0); return n>m?n:m; }, 0);
+  return `${prefix}-2026-${String(max+1).padStart(4,'0')}`;
+}
+
+function seedData() {
+  if (loadData('customers').length > 0) return;
+  const customers = [
+    { id:'CUS-2026-0001', name:'Nguyễn Thị Mai', phone:'0901234567', email:'mai.nguyen@gmail.com', type:'Cá nhân', province:'TP. Hồ Chí Minh', segment:'Elderly Care', channel:'SHOPEE', assignee:'Sang', status:'VIP', note:'Mua đều đặn mỗi tháng', createdAt:'2026-04-10', totalSpent:2850000 },
+    { id:'CUS-2026-0002', name:'Trần Văn Hùng', phone:'0912345678', email:'', type:'Cá nhân', province:'Hà Nội', segment:'First Aid', channel:'TIKTOK', assignee:'Sang', status:'Active', note:'Quan tâm túi xe hơi', createdAt:'2026-05-02', totalSpent:450000 },
+    { id:'CUS-2026-0003', name:'Công ty TNHH Minh Phú', phone:'0283456789', email:'minhphu@corp.vn', type:'Doanh nghiệp', province:'TP. Hồ Chí Minh', segment:'First Aid', channel:'ALIBABA', assignee:'Sang', status:'Active', note:'Đặt bulk hàng tháng', createdAt:'2026-04-20', totalSpent:12500000 },
+    { id:'CUS-2026-0004', name:'Lê Thị Hoa', phone:'0934567890', email:'', type:'Cá nhân', province:'Đà Nẵng', segment:'Elderly Care', channel:'FACEBOOK', assignee:'', status:'Lead', note:'Hỏi về máy đo huyết áp', createdAt:'2026-06-15', totalSpent:0 },
+    { id:'CUS-2026-0005', name:'Phạm Minh Tuấn', phone:'0945678901', email:'tuan.pm@yahoo.com', type:'Cá nhân', province:'TP. Hồ Chí Minh', segment:'Elderly Care', channel:'ZALO', assignee:'Sang', status:'Active', note:'', createdAt:'2026-05-28', totalSpent:680000 },
+    { id:'CUS-2026-0006', name:'Bệnh viện Quận 7', phone:'0283456000', email:'bvq7@hospital.vn', type:'Doanh nghiệp', province:'TP. Hồ Chí Minh', segment:'First Aid', channel:'EMAIL', assignee:'Sang', status:'VIP', note:'Hợp đồng cung ứng 6 tháng', createdAt:'2026-03-01', totalSpent:45000000 },
+    { id:'CUS-2026-0007', name:'Hoàng Văn Nam', phone:'0956789012', email:'', type:'Cá nhân', province:'Hà Nội', segment:'Elderly Care', channel:'SHOPEE', assignee:'', status:'Inactive', note:'Chưa mua lại từ tháng 3', createdAt:'2026-02-14', totalSpent:320000 },
+    { id:'CUS-2026-0008', name:'Trường Mầm non Ánh Sao', phone:'0287654321', email:'anhsao@school.vn', type:'Doanh nghiệp', province:'Bình Dương', segment:'First Aid', channel:'LAZADA', assignee:'Sang', status:'Active', note:'', createdAt:'2026-06-01', totalSpent:1800000 },
+    { id:'CUS-2026-0009', name:'Nguyễn Thị Lan Anh', phone:'0971234567', email:'lananh@gmail.com', type:'Cá nhân', province:'Cần Thơ', segment:'Elderly Care', channel:'FACEBOOK', assignee:'', status:'Active', note:'', createdAt:'2026-05-10', totalSpent:560000 },
+    { id:'CUS-2026-0010', name:'Công ty CP An Toàn Việt', phone:'0248765432', email:'safety@antoanviet.vn', type:'Doanh nghiệp', province:'Hà Nội', segment:'First Aid', channel:'EMAIL', assignee:'Sang', status:'Active', note:'Mua túi PCCC số lượng lớn', createdAt:'2026-05-15', totalSpent:8400000 },
+  ];
+  const orders = [
+    { id:'ORD-2026-0001', customerId:'CUS-2026-0001', customerName:'Nguyễn Thị Mai', channel:'SHOPEE', productCode:'SA-EC-001', productName:'Máy đo huyết áp bắp tay', quantity:1, price:850000, total:850000, status:'Completed', orderDate:'2026-06-10', note:'' },
+    { id:'ORD-2026-0002', customerId:'CUS-2026-0003', customerName:'Công ty TNHH Minh Phú', channel:'ALIBABA', productCode:'SA-FA-002', productName:'Túi sơ cứu văn phòng / doanh nghiệp', quantity:20, price:320000, total:6400000, status:'Completed', orderDate:'2026-06-05', note:'Giao tại kho quận 9' },
+    { id:'ORD-2026-0003', customerId:'CUS-2026-0002', customerName:'Trần Văn Hùng', channel:'TIKTOK', productCode:'SA-FA-003', productName:'Túi sơ cứu xe hơi / phương tiện', quantity:1, price:450000, total:450000, status:'Shipped', orderDate:'2026-06-18', note:'' },
+    { id:'ORD-2026-0004', customerId:'CUS-2026-0006', customerName:'Bệnh viện Quận 7', channel:'EMAIL', productCode:'SA-FA-006', productName:'Túi sơ cứu tiêu chuẩn PCCC / ISO', quantity:10, price:680000, total:6800000, status:'Paid', orderDate:'2026-06-14', note:'Cần hoá đơn VAT' },
+    { id:'ORD-2026-0005', customerId:'CUS-2026-0005', customerName:'Phạm Minh Tuấn', channel:'ZALO', productCode:'SA-EC-004', productName:'Máy đo SpO2 kẹp ngón tay', quantity:1, price:280000, total:280000, status:'Confirmed', orderDate:'2026-06-20', note:'' },
+    { id:'ORD-2026-0006', customerId:'CUS-2026-0008', customerName:'Trường Mầm non Ánh Sao', channel:'LAZADA', productCode:'SA-FA-001', productName:'Túi sơ cứu cơ bản cá nhân', quantity:6, price:180000, total:1080000, status:'Completed', orderDate:'2026-06-08', note:'' },
+    { id:'ORD-2026-0007', customerId:'CUS-2026-0001', customerName:'Nguyễn Thị Mai', channel:'SHOPEE', productCode:'SA-EC-003', productName:'Máy đo đường huyết + que thử', quantity:1, price:650000, total:650000, status:'Completed', orderDate:'2026-05-20', note:'' },
+    { id:'ORD-2026-0008', customerId:'CUS-2026-0003', customerName:'Công ty TNHH Minh Phú', channel:'ALIBABA', productCode:'SA-FA-005', productName:'Bộ bổ sung / refill kit', quantity:30, price:120000, total:3600000, status:'Completed', orderDate:'2026-05-15', note:'' },
+    { id:'ORD-2026-0009', customerId:'CUS-2026-0006', customerName:'Bệnh viện Quận 7', channel:'EMAIL', productCode:'SA-FA-002', productName:'Túi sơ cứu văn phòng / doanh nghiệp', quantity:15, price:320000, total:4800000, status:'Completed', orderDate:'2026-05-01', note:'' },
+    { id:'ORD-2026-0010', customerId:'CUS-2026-0004', customerName:'Lê Thị Hoa', channel:'FACEBOOK', productCode:'SA-EC-001', productName:'Máy đo huyết áp bắp tay', quantity:1, price:850000, total:850000, status:'Quoted', orderDate:'2026-06-21', note:'Đang chờ xác nhận' },
+    { id:'ORD-2026-0011', customerId:'CUS-2026-0010', customerName:'Công ty CP An Toàn Việt', channel:'EMAIL', productCode:'SA-FA-006', productName:'Túi sơ cứu tiêu chuẩn PCCC / ISO', quantity:12, price:680000, total:8160000, status:'Completed', orderDate:'2026-05-25', note:'' },
+    { id:'ORD-2026-0012', customerId:'CUS-2026-0009', customerName:'Nguyễn Thị Lan Anh', channel:'FACEBOOK', productCode:'SA-EC-006', productName:'Máy massage vai gáy', quantity:1, price:560000, total:560000, status:'Completed', orderDate:'2026-06-12', note:'' },
+  ];
+  saveData('customers', customers);
+  saveData('orders', orders);
+}
+
+// ============================================================
+// HELPERS
+// ============================================================
+function fmtMoney(n) { return new Intl.NumberFormat('vi-VN').format(n)+'₫'; }
+function fmtDate(d) { if(!d) return '—'; const [y,m,dd]=d.split('-'); return `${dd}/${m}/${y}`; }
+function channelBadge(ch) { return `<span class="badge badge-${ch.toLowerCase()}">${ch}</span>`; }
+function statusBadge(s) {
+  const m={
+    Lead:'lead',Active:'active',VIP:'vip',Inactive:'inactive',Lost:'lost',
+    Quoted:'quoted',Confirmed:'confirmed',Paid:'paid',
+    'Đóng gói':'donggoi','Đang giao':'danggiao','Đã giao thành công':'dagiao',
+    'Hoàn thành':'hoantthanh','Huỷ đơn':'huyddon','Hoàn trả':'hoantra',
+    // backward compat
+    Shipped:'danggiao',Completed:'hoantthanh',Cancelled:'huyddon',Refunded:'hoantra'
+  };
+  return `<span class="badge badge-${m[s]||'lead'}">${s}</span>`;
+}
+function typeBadge(t) {
+  return t==='Doanh nghiệp'
+    ? `<span class="badge badge-b2b">🏢 B2B</span>`
+    : `<span class="badge badge-b2c">👤 B2C</span>`;
+}
+function lineBadge(l) {
+  return l==='First Aid'
+    ? `<span class="badge badge-firstaid">🩺 First Aid</span>`
+    : `<span class="badge badge-elderlycare">👴 Elderly Care</span>`;
+}
+
+function toast(msg, type='success') {
+  const el=document.createElement('div');
+  el.className=`toast-item toast-${type}`;
+  el.innerHTML=(type==='success'?'✅':'❌')+' '+msg;
+  document.getElementById('toast').appendChild(el);
+  setTimeout(()=>el.remove(),3000);
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+let currentPage='dashboard';
+let chartInstances={};
+
+function navigate(page) {
+  currentPage=page;
+  document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
+  const navEl=document.getElementById('nav-'+page);
+  if(navEl) navEl.classList.add('active');
+  const titles={dashboard:'Dashboard',customers:'Khách hàng',orders:'Đơn hàng',products:'Danh sách sản phẩm',channels:'Báo cáo kênh',refill:'🔔 Nhắc Refill — First Aid'};
+  const ctas={dashboard:'Thêm khách hàng',customers:'Thêm khách hàng',orders:'Thêm đơn hàng',products:'',channels:'',refill:''};
+  document.getElementById('page-title').textContent=titles[page]||page;
+  document.getElementById('topbar-cta-label').textContent=ctas[page]||'';
+  document.getElementById('topbar-cta').style.display=ctas[page]?'':'none';
+  Object.values(chartInstances).forEach(c=>{try{c.destroy();}catch{}});
+  chartInstances={};
+  renderPage(page);
+}
+
+function updateRefillBadge() {
+  const data=getRefillData(90);
+  const overdue=data.filter(r=>r.status==='overdue').length;
+  const badge=document.getElementById('refill-badge');
+  if(badge){badge.textContent=overdue;badge.style.display=overdue>0?'':'none';}
+}
+
+function topbarAction() {
+  if(currentPage==='orders') openAddOrderModal();
+  else openAddCustomerModal();
+}
+
+// ============================================================
+// DASHBOARD
+// ============================================================
+function renderDashboard() {
+  const customers=loadData('customers');
+  const orders=loadData('orders');
+  const now=new Date();
+  const thisMonth=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  const lastMonth=now.getMonth()===0?`${now.getFullYear()-1}-12`:`${now.getFullYear()}-${String(now.getMonth()).padStart(2,'0')}`;
+
+  const thisMO=orders.filter(o=>o.orderDate.startsWith(thisMonth)&&!['Cancelled','Refunded'].includes(o.status));
+  const lastMO=orders.filter(o=>o.orderDate.startsWith(lastMonth)&&!['Cancelled','Refunded'].includes(o.status));
+  const revenue=thisMO.reduce((s,o)=>s+o.total,0);
+  const lastRevenue=lastMO.reduce((s,o)=>s+o.total,0);
+  const revGrowth=lastRevenue?Math.round((revenue-lastRevenue)/lastRevenue*100):0;
+  const newCustomers=customers.filter(c=>c.createdAt.startsWith(thisMonth)).length;
+
+  // Top channel
+  const chRev={};
+  orders.filter(o=>!['Cancelled','Refunded'].includes(o.status)).forEach(o=>{ chRev[o.channel]=(chRev[o.channel]||0)+o.total; });
+  const topCh=Object.entries(chRev).sort((a,b)=>b[1]-a[1])[0];
+
+  // B2B vs B2C
+  const b2bCusts=customers.filter(c=>c.type==='Doanh nghiệp');
+  const b2cCusts=customers.filter(c=>c.type!=='Doanh nghiệp');
+  const allOrders=orders.filter(o=>!['Cancelled','Refunded'].includes(o.status));
+  const b2bRevenue=allOrders.filter(o=>{const c=customers.find(x=>x.id===o.customerId);return c&&c.type==='Doanh nghiệp';}).reduce((s,o)=>s+o.total,0);
+  const b2cRevenue=allOrders.filter(o=>{const c=customers.find(x=>x.id===o.customerId);return c&&c.type!=='Doanh nghiệp';}).reduce((s,o)=>s+o.total,0);
+  const totalRev=b2bRevenue+b2cRevenue;
+
+  // Status counts
+  const statusCount={};
+  CUSTOMER_STATUSES.forEach(s=>statusCount[s]=0);
+  customers.forEach(c=>statusCount[c.status]=(statusCount[c.status]||0)+1);
+
+  // Top provinces
+  const provCount={};
+  customers.forEach(c=>{ if(c.province) provCount[c.province]=(provCount[c.province]||0)+1; });
+  const topProvs=Object.entries(provCount).sort((a,b)=>b[1]-a[1]).slice(0,5);
+
+  // Product line revenue
+  const lineRev={'First Aid':0,'Elderly Care':0};
+  allOrders.forEach(o=>{
+    const p=PRODUCTS.find(x=>x.code===o.productCode);
+    if(p) lineRev[p.line]=(lineRev[p.line]||0)+o.total;
+  });
+
+  // Channel data for chart
+  const chData={};
+  CHANNELS.forEach(ch=>{chData[ch]={orders:0,revenue:0};});
+  allOrders.forEach(o=>{if(chData[o.channel]){chData[o.channel].orders++;chData[o.channel].revenue+=o.total;}});
+
+  // Recent orders
+  const recent=[...orders].sort((a,b)=>new Date(b.orderDate)-new Date(a.orderDate)).slice(0,5);
+
+  const totalLineRev=lineRev['First Aid']+lineRev['Elderly Care'];
+
+  document.getElementById('content').innerHTML = `
+    <!-- KPI ROW -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-icon" style="background:#E0F7F7">👥</div>
+        <div>
+          <h3>${customers.length}</h3>
+          <p>Tổng khách hàng</p>
+          <div class="trend up">+${newCustomers} mới tháng này</div>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon" style="background:#FFF0E6">🛒</div>
+        <div>
+          <h3>${thisMO.length}</h3>
+          <p>Đơn hàng tháng này</p>
+          <div class="trend ${thisMO.length>=lastMO.length?'up':'down'}">${lastMO.length} đơn tháng trước</div>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon" style="background:#F0FFF4">💰</div>
+        <div>
+          <h3 style="font-size:17px">${fmtMoney(revenue)}</h3>
+          <p>Doanh thu tháng này</p>
+          <div class="trend ${revGrowth>=0?'up':'down'}">${revGrowth>=0?'▲':'▼'} ${Math.abs(revGrowth)}% vs tháng trước</div>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon" style="background:#F3E8FF">🏆</div>
+        <div>
+          <h3>${topCh?topCh[0]:'—'}</h3>
+          <p>Kênh doanh thu cao nhất</p>
+          <div class="trend up">${topCh?fmtMoney(topCh[1]):'—'}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- B2B/B2C + PROVINCE + STATUS ROW -->
+    <div class="grid-3" style="margin-bottom:16px">
+      <!-- B2B vs B2C -->
+      <div class="card" style="margin-bottom:0">
+        <div class="card-header"><h3>🏢 B2B vs 👤 B2C</h3></div>
+        <div class="card-body" style="padding:16px">
+          <div class="split-stat">
+            <div class="split-half b2b">
+              <h4>${b2bCusts.length}</h4>
+              <p>B2B (Doanh nghiệp)</p>
+            </div>
+            <div class="split-half b2c">
+              <h4>${b2cCusts.length}</h4>
+              <p>B2C (Cá nhân)</p>
+            </div>
+          </div>
+          <div style="margin-bottom:8px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:12px">
+              <span style="color:#6D28D9;font-weight:600">B2B: ${fmtMoney(b2bRevenue)}</span>
+              <span>${totalRev?Math.round(b2bRevenue/totalRev*100):0}%</span>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" style="width:${totalRev?Math.round(b2bRevenue/totalRev*100):0}%;background:#7C3AED"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:12px">
+              <span style="color:#0369A1;font-weight:600">B2C: ${fmtMoney(b2cRevenue)}</span>
+              <span>${totalRev?Math.round(b2cRevenue/totalRev*100):0}%</span>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" style="width:${totalRev?Math.round(b2cRevenue/totalRev*100):0}%;background:#0EA5E9"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top Provinces -->
+      <div class="card" style="margin-bottom:0">
+        <div class="card-header"><h3>📍 Top tỉnh/thành phố</h3></div>
+        <div class="card-body" style="padding:16px">
+          ${topProvs.length===0?'<p style="color:var(--text-muted);text-align:center;padding:20px 0">Chưa có dữ liệu</p>':
+            topProvs.map(([prov,cnt],i)=>`
+            <div style="margin-bottom:10px">
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:12px">
+                <span style="font-weight:500">${i===0?'🥇':i===1?'🥈':i===2?'🥉':'  '} ${prov}</span>
+                <span style="font-weight:600">${cnt} KH</span>
+              </div>
+              <div class="progress-bar"><div class="progress-fill" style="width:${Math.round(cnt/customers.length*100)}%;background:var(--primary)"></div></div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      <!-- Product Line -->
+      <div class="card" style="margin-bottom:0">
+        <div class="card-header"><h3>📦 Doanh thu theo dòng SP</h3></div>
+        <div class="card-body" style="padding:16px">
+          <div style="margin-bottom:16px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:12px">
+              <span>${lineBadge('First Aid')}</span>
+              <span style="font-weight:600">${fmtMoney(lineRev['First Aid'])}</span>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" style="width:${totalLineRev?Math.round(lineRev['First Aid']/totalLineRev*100):0}%;background:#E74C3C"></div></div>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:3px">${totalLineRev?Math.round(lineRev['First Aid']/totalLineRev*100):0}% tổng doanh thu</div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:12px">
+              <span>${lineBadge('Elderly Care')}</span>
+              <span style="font-weight:600">${fmtMoney(lineRev['Elderly Care'])}</span>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" style="width:${totalLineRev?Math.round(lineRev['Elderly Care']/totalLineRev*100):0}%;background:#2B6CB0"></div></div>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:3px">${totalLineRev?Math.round(lineRev['Elderly Care']/totalLineRev*100):0}% tổng doanh thu</div>
+          </div>
+          <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border);font-size:12px;color:var(--text-muted);text-align:center">
+            Tổng: <strong style="color:var(--text)">${fmtMoney(totalLineRev)}</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHART + RECENT ORDERS -->
+    <div class="grid-2" style="margin-bottom:16px">
+      <div class="card" style="margin-bottom:0">
+        <div class="card-header"><h3>📊 Doanh thu theo kênh</h3><button class="btn btn-outline btn-sm" onclick="navigate('channels')">Chi tiết →</button></div>
+        <div class="card-body">
+          <div class="chart-container" style="height:220px"><canvas id="dash-bar"></canvas></div>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:0">
+        <div class="card-header"><h3>👥 Phân loại khách hàng</h3></div>
+        <div class="card-body">
+          <div style="display:flex;gap:16px;align-items:center">
+            <div style="width:150px;height:150px;flex-shrink:0"><canvas id="dash-donut"></canvas></div>
+            <div style="flex:1">
+              ${CUSTOMER_STATUSES.map(s=>`
+                <div style="display:flex;justify-content:space-between;margin-bottom:8px;align-items:center">
+                  ${statusBadge(s)}
+                  <span style="font-weight:700;font-size:16px">${statusCount[s]}</span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RECENT ORDERS -->
+    <div class="card">
+      <div class="card-header">
+        <h3>🕐 Đơn hàng gần nhất</h3>
+        <button class="btn btn-outline btn-sm" onclick="navigate('orders')">Xem tất cả →</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Mã đơn</th><th>Khách hàng</th><th>Loại</th><th>Kênh</th><th>Sản phẩm</th><th>Tổng</th><th>Trạng thái</th><th>Ngày</th></tr></thead>
+          <tbody>
+            ${recent.map(o=>{
+              const c=customers.find(x=>x.id===o.customerId);
+              return `<tr>
+                <td style="font-family:monospace;font-size:11px;color:var(--primary)">${o.id}</td>
+                <td><strong>${o.customerName}</strong>${c&&c.province?`<div style="font-size:11px;color:var(--text-muted)">📍${c.province}</div>`:''}</td>
+                <td>${c?typeBadge(c.type):'—'}</td>
+                <td>${channelBadge(o.channel)}</td>
+                <td style="font-size:12px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${o.productName}</td>
+                <td style="font-weight:600;color:var(--success)">${fmtMoney(o.total)}</td>
+                <td>${statusBadge(o.status)}</td>
+                <td style="color:var(--text-muted);font-size:12px">${fmtDate(o.orderDate)}</td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+
+  // Bar chart
+  const activeChannels=CHANNELS.filter(ch=>chData[ch].revenue>0);
+  const ctx1=document.getElementById('dash-bar').getContext('2d');
+  chartInstances.bar=new Chart(ctx1,{
+    type:'bar',
+    data:{ labels:activeChannels, datasets:[{label:'Doanh thu',data:activeChannels.map(ch=>chData[ch].revenue),backgroundColor:activeChannels.map(ch=>CH_COLORS[ch]+'BB'),borderRadius:6}] },
+    options:{ responsive:true,maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ y:{beginAtZero:true,grid:{color:'#F0F4F8'},ticks:{callback:v=>(v/1000000).toFixed(1)+'tr',font:{size:10}}}, x:{grid:{display:false},ticks:{font:{size:11}}} } }
+  });
+
+  // Donut
+  const ctx2=document.getElementById('dash-donut').getContext('2d');
+  chartInstances.donut=new Chart(ctx2,{
+    type:'doughnut',
+    data:{ labels:CUSTOMER_STATUSES, datasets:[{data:CUSTOMER_STATUSES.map(s=>statusCount[s]),backgroundColor:['#3182CE','#38A169','#DD6B20','#718096','#E53E3E'],borderWidth:2,borderColor:'#fff'}] },
+    options:{ responsive:true,maintainAspectRatio:false,cutout:'65%', plugins:{legend:{display:false}} }
+  });
+}
+
+// ============================================================
+// CUSTOMERS
+// ============================================================
+let custFilter={status:'',channel:'',segment:'',province:'',search:''};
+
+function renderCustomers() {
+  const provinces=[...new Set(loadData('customers').filter(c=>c.province).map(c=>c.province))].sort();
+  document.getElementById('content').innerHTML=`
+    <div class="toolbar">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="form-control" placeholder="Tìm tên, SĐT, email..." oninput="custFilter.search=this.value;refreshCustTable()" style="padding-left:34px">
+      </div>
+      <select class="form-control" style="width:120px" onchange="custFilter.status=this.value;refreshCustTable()">
+        <option value="">Tất cả status</option>
+        ${CUSTOMER_STATUSES.map(s=>`<option>${s}</option>`).join('')}
+      </select>
+      <select class="form-control" style="width:100px" onchange="custFilter.channel=this.value;refreshCustTable()">
+        <option value="">Tất cả kênh</option>
+        ${CHANNELS.map(c=>`<option>${c}</option>`).join('')}
+      </select>
+      <select class="form-control" style="width:130px" onchange="custFilter.province=this.value;refreshCustTable()">
+        <option value="">Tất cả tỉnh</option>
+        ${provinces.map(p=>`<option>${p}</option>`).join('')}
+      </select>
+      <select class="form-control" style="width:120px" onchange="custFilter.type=this.value;refreshCustTable()">
+        <option value="">B2B + B2C</option>
+        <option value="Doanh nghiệp">B2B</option>
+        <option value="Cá nhân">B2C</option>
+      </select>
+    </div>
+    <div class="card"><div id="cust-table-wrap"></div></div>
+  `;
+  refreshCustTable();
+}
+
+function refreshCustTable() {
+  let cs=loadData('customers');
+  const f=custFilter;
+  if(f.search){const q=f.search.toLowerCase();cs=cs.filter(c=>c.name.toLowerCase().includes(q)||c.phone.includes(q)||(c.email||'').toLowerCase().includes(q));}
+  if(f.status) cs=cs.filter(c=>c.status===f.status);
+  if(f.channel) cs=cs.filter(c=>c.channel===f.channel);
+  if(f.province) cs=cs.filter(c=>c.province===f.province);
+  if(f.type) cs=cs.filter(c=>c.type===f.type);
+
+  const el=document.getElementById('cust-table-wrap');
+  if(!el) return;
+  if(cs.length===0){el.innerHTML=`<div class="empty-state"><div class="emoji">👥</div><h4>Không tìm thấy</h4><p>Thử thay đổi bộ lọc</p></div>`;return;}
+  el.innerHTML=`
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Mã KH</th><th>Tên khách hàng</th><th>Loại</th><th>SĐT</th><th>Tỉnh/TP</th><th>Phân khúc</th><th>Kênh</th><th>Trạng thái</th><th>Chi tiêu</th><th>Hành động</th></tr></thead>
+        <tbody>
+          ${cs.map(c=>`
+            <tr>
+              <td style="font-family:monospace;font-size:11px;color:var(--primary)">${c.id}</td>
+              <td>
+                <div style="font-weight:600">${c.name}</div>
+                ${c.email?`<div style="font-size:11px;color:var(--text-muted)">${c.email}</div>`:''}
+              </td>
+              <td>${typeBadge(c.type)}</td>
+              <td style="font-size:13px">${c.phone}</td>
+              <td>${c.province?`<span style="font-size:12px">📍 ${c.province}</span>`:'<span style="color:var(--text-muted)">—</span>'}</td>
+              <td>${lineBadge(c.segment==='Both'?'First Aid':c.segment)}${c.segment==='Both'?` <span class="badge badge-elderlycare">👴</span>`:''}</td>
+              <td>${channelBadge(c.channel)}</td>
+              <td>${statusBadge(c.status)}</td>
+              <td style="font-weight:600;color:${(c.totalSpent||0)>0?'var(--success)':'var(--text-muted)'}">${fmtMoney(c.totalSpent||0)}</td>
+              <td>
+                <div style="display:flex;gap:2px">
+                  <button class="btn-icon" title="Sửa" onclick="openEditCust('${c.id}')">✏️</button>
+                  <button class="btn-icon" title="Đơn hàng" onclick="viewCustOrders('${c.id}')">🛒</button>
+                  <button class="btn-icon" title="Xoá" onclick="confirmDelCust('${c.id}')">🗑️</button>
+                </div>
+              </td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+    <div style="padding:10px 20px;font-size:12px;color:var(--text-muted);border-top:1px solid var(--border);display:flex;justify-content:space-between">
+      <span>Hiển thị ${cs.length} / ${loadData('customers').length} khách hàng</span>
+      <span>B2B: ${cs.filter(c=>c.type==='Doanh nghiệp').length} · B2C: ${cs.filter(c=>c.type!=='Doanh nghiệp').length}</span>
+    </div>
+  `;
+}
+
+function openAddCustomerModal(d={}) { showModal('Thêm khách hàng mới', custForm(d), ()=>saveCust(false)); }
+function openEditCust(id) { const c=loadData('customers').find(x=>x.id===id); if(!c) return; showModal('Cập nhật khách hàng', custForm(c,id), ()=>saveCust(true,id)); }
+
+function custForm(d={}, editId=null) {
+  return `
+    <div class="form-row">
+      <div class="form-group"><label>Tên khách hàng *</label><input class="form-control" id="f-name" placeholder="Nguyễn Văn A" value="${d.name||''}"></div>
+      <div class="form-group"><label>SĐT / Zalo *</label><input class="form-control" id="f-phone" placeholder="0901234567" value="${d.phone||''}"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Email</label><input class="form-control" id="f-email" placeholder="email@example.com" value="${d.email||''}"></div>
+      <div class="form-group">
+        <label>Loại khách hàng (B2B / B2C)</label>
+        <select class="form-control" id="f-type">
+          <option ${(d.type||'Cá nhân')==='Cá nhân'?'selected':''} value="Cá nhân">👤 B2C — Cá nhân</option>
+          <option ${d.type==='Doanh nghiệp'?'selected':''} value="Doanh nghiệp">🏢 B2B — Doanh nghiệp</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Tỉnh / Thành phố *</label>
+        <select class="form-control" id="f-province">
+          <option value="">-- Chọn tỉnh/thành --</option>
+          ${VN_PROVINCES.map(p=>`<option ${d.province===p?'selected':''}>${p}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Phân khúc sản phẩm</label>
+        <select class="form-control" id="f-segment">
+          <option ${(d.segment||'First Aid')==='First Aid'?'selected':''}>First Aid</option>
+          <option ${d.segment==='Elderly Care'?'selected':''}>Elderly Care</option>
+          <option ${d.segment==='Both'?'selected':''} value="Both">Cả hai (Both)</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Kênh nguồn *</label>
+        <select class="form-control" id="f-channel">
+          ${CHANNELS.map(ch=>`<option ${d.channel===ch?'selected':''}>${ch}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Trạng thái</label>
+        <select class="form-control" id="f-status">
+          ${CUSTOMER_STATUSES.map(s=>`<option ${(d.status||'Lead')===s?'selected':''}>${s}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Người phụ trách</label><input class="form-control" id="f-assignee" placeholder="Tên nhân viên" value="${d.assignee||''}"></div>
+      <div class="form-group"><label>Ghi chú</label><input class="form-control" id="f-note" placeholder="Ghi chú thêm..." value="${d.note||''}"></div>
+    </div>
+  `;
+}
+
+function saveCust(isEdit, editId=null) {
+  const name=document.getElementById('f-name').value.trim();
+  const phone=document.getElementById('f-phone').value.trim();
+  if(!name||!phone){toast('Vui lòng nhập tên và SĐT','error');return false;}
+  const customers=loadData('customers');
+  const nd={name,phone,email:document.getElementById('f-email').value.trim(),type:document.getElementById('f-type').value,province:document.getElementById('f-province').value,segment:document.getElementById('f-segment').value,channel:document.getElementById('f-channel').value,status:document.getElementById('f-status').value,assignee:document.getElementById('f-assignee').value.trim(),note:document.getElementById('f-note').value.trim()};
+  if(isEdit){
+    const idx=customers.findIndex(c=>c.id===editId);
+    if(idx>=0) customers[idx]={...customers[idx],...nd};
+    saveData('customers',customers);toast('Cập nhật khách hàng thành công!');
+  } else {
+    const c={id:genId('CUS'),...nd,totalSpent:0,createdAt:new Date().toISOString().split('T')[0]};
+    customers.push(c);saveData('customers',customers);toast(`Đã thêm ${c.id}`);
+  }
+  closeModal();
+  if(currentPage==='customers') refreshCustTable();
+  return true;
+}
+
+function confirmDelCust(id) {
+  const c=loadData('customers').find(x=>x.id===id);
+  if(!c) return;
+  showConfirm(`Xoá khách hàng "${c.name}"?`,'Hành động này không thể hoàn tác.',()=>{
+    saveData('customers',loadData('customers').filter(x=>x.id!==id));
+    toast('Đã xoá khách hàng');closeModal();refreshCustTable();
+  });
+}
+
+function viewCustOrders(custId) {
+  navigate('orders');
+  setTimeout(()=>{
+    const ords=loadData('orders').filter(o=>o.customerId===custId);
+    const c=loadData('customers').find(x=>x.id===custId);
+    document.getElementById('page-title').textContent=`Đơn hàng — ${c?.name||custId}`;
+    renderOrderTable(ords);
+  },50);
+}
+
+// ============================================================
+// ORDERS
+// ============================================================
+let ordFilter={status:'',channel:'',search:''};
+
+function renderOrders() {
+  const orders=loadData('orders');
+  // Count per pipeline step
+  const stepCount={};
+  PIPELINE_STEPS.forEach(s=>stepCount[s]=0);
+  orders.forEach(o=>{
+    const norm={'Shipped':'Đang giao','Completed':'Hoàn thành','Cancelled':'Huỷ đơn','Refunded':'Hoàn trả'}[o.status]||o.status;
+    if(stepCount[norm]!==undefined) stepCount[norm]++;
+  });
+
+  document.getElementById('content').innerHTML=`
+    <!-- PIPELINE STEPPER -->
+    <div class="pipeline-wrap">
+      ${PIPELINE_STEPS.map(s=>`
+        <div class="pipe-stage ${ordFilter.status===s?'active':''}" onclick="ordFilter.status=ordFilter.status===this_s?'':'${s}';refreshOrdTable()" data-s="${s}">
+          <div class="pipe-label">${PIPELINE_LABELS[s]}</div>
+          <div class="pipe-count">${stepCount[s]}</div>
+        </div>
+      `).join('')}
+      <div class="pipe-stage ${ordFilter.status===''&&'pipeline-all'===''?'':''}${ordFilter.status===''?'active':''}" onclick="ordFilter.status='';refreshOrdTable()" style="min-width:80px;background:${ordFilter.status===''?'var(--primary)':'white'};color:${ordFilter.status===''?'white':'var(--text)'};border-right:1px solid var(--border);border-radius:0 10px 10px 0">
+        <div class="pipe-label" style="${ordFilter.status===''?'color:rgba(255,255,255,0.8)':''}">Tất cả</div>
+        <div class="pipe-count">${orders.length}</div>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="form-control" placeholder="Tìm KH, mã đơn, sản phẩm..." oninput="ordFilter.search=this.value;refreshOrdTable()" style="padding-left:34px">
+      </div>
+      <select class="form-control" style="width:160px" onchange="ordFilter.status=this.value;refreshOrdTable()">
+        <option value="">Tất cả trạng thái</option>
+        ${ORDER_STATUSES.map(s=>`<option ${ordFilter.status===s?'selected':''}>${s}</option>`).join('')}
+      </select>
+      <select class="form-control" style="width:120px" onchange="ordFilter.channel=this.value;refreshOrdTable()">
+        <option value="">Tất cả kênh</option>
+        ${CHANNELS.map(c=>`<option>${c}</option>`).join('')}
+      </select>
+    </div>
+    <div class="card"><div id="ord-table-wrap"></div></div>
+  `;
+  // Fix onclick for pipeline stages (can't use this_s in template literal easily)
+  document.querySelectorAll('.pipe-stage[data-s]').forEach(el=>{
+    el.onclick=()=>{
+      ordFilter.status=ordFilter.status===el.dataset.s?'':el.dataset.s;
+      navigate('orders');
+    };
+  });
+  refreshOrdTable();
+}
+
+function refreshOrdTable(custom=null) {
+  let ords=custom||loadData('orders');
+  const f=ordFilter;
+  if(f.search){const q=f.search.toLowerCase();ords=ords.filter(o=>o.customerName.toLowerCase().includes(q)||o.id.toLowerCase().includes(q)||o.productName.toLowerCase().includes(q));}
+  if(f.status) ords=ords.filter(o=>o.status===f.status);
+  if(f.channel) ords=ords.filter(o=>o.channel===f.channel);
+  ords=[...ords].sort((a,b)=>new Date(b.orderDate)-new Date(a.orderDate));
+  renderOrderTable(ords);
+}
+
+function renderOrderTable(ords) {
+  const el=document.getElementById('ord-table-wrap');
+  if(!el) return;
+  if(ords.length===0){el.innerHTML=`<div class="empty-state"><div class="emoji">🛒</div><h4>Không có đơn hàng</h4></div>`;return;}
+  const totalRev=ords.filter(o=>!['Cancelled','Refunded'].includes(o.status)).reduce((s,o)=>s+o.total,0);
+  const customers=loadData('customers');
+  el.innerHTML=`
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Mã đơn</th><th>Khách hàng</th><th>Loại</th><th>Kênh</th><th>Sản phẩm</th><th>SL</th><th>Tổng</th><th>Trạng thái</th><th>Ngày</th><th></th></tr></thead>
+        <tbody>
+          ${ords.map(o=>{
+            const c=customers.find(x=>x.id===o.customerId);
+            return `<tr>
+              <td style="font-family:monospace;font-size:11px;color:var(--primary)">${o.id}</td>
+              <td>
+                <strong>${o.customerName}</strong>
+                ${c&&c.province?`<div style="font-size:11px;color:var(--text-muted)">📍${c.province}</div>`:''}
+              </td>
+              <td>${c?typeBadge(c.type):'—'}</td>
+              <td>${channelBadge(o.channel)}</td>
+              <td>
+                <div style="font-size:12px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${o.productName}</div>
+                <div style="font-size:11px;color:var(--text-muted)">${o.productCode}</div>
+              </td>
+              <td style="text-align:center;font-weight:600">${o.quantity}</td>
+              <td style="font-weight:700;color:var(--success)">${fmtMoney(o.total)}</td>
+              <td>
+                <select class="form-control" style="padding:4px 8px;font-size:11px;width:108px" onchange="updateOrdStatus('${o.id}',this.value)">
+                  ${ORDER_STATUSES.map(s=>`<option ${o.status===s?'selected':''}>${s}</option>`).join('')}
+                </select>
+              </td>
+              <td style="color:var(--text-muted);font-size:12px;white-space:nowrap">${fmtDate(o.orderDate)}</td>
+              <td>
+                <div style="display:flex;gap:2px">
+                  <button class="btn-icon" title="Sửa" onclick="openEditOrd('${o.id}')">✏️</button>
+                  <button class="btn-icon" title="Xoá" onclick="confirmDelOrd('${o.id}')">🗑️</button>
+                </div>
+              </td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+    <div style="padding:10px 20px;font-size:12px;color:var(--text-muted);border-top:1px solid var(--border);display:flex;justify-content:space-between">
+      <span>${ords.length} đơn hàng</span>
+      <span>Doanh thu: <strong style="color:var(--success)">${fmtMoney(totalRev)}</strong></span>
+    </div>
+  `;
+}
+
+function updateOrdStatus(id,newStatus) {
+  const ords=loadData('orders');
+  const idx=ords.findIndex(o=>o.id===id);
+  if(idx>=0){
+    ords[idx].status=newStatus;
+    saveData('orders',ords);
+    if(newStatus==='Completed'){
+      const custs=loadData('customers');
+      const ci=custs.findIndex(c=>c.id===ords[idx].customerId);
+      if(ci>=0){
+        const spent=ords.filter(o=>o.customerId===custs[ci].id&&o.status==='Completed').reduce((s,o)=>s+o.total,0);
+        custs[ci].totalSpent=spent;
+        custs[ci].status=spent>=5000000?'VIP':'Active';
+        saveData('customers',custs);
+      }
+    }
+    toast('Cập nhật trạng thái đơn hàng!');
+  }
+}
+
+function openAddOrderModal(d={}) { showModal('Thêm đơn hàng mới', ordForm(d), ()=>saveOrd(false)); }
+function openEditOrd(id) { const o=loadData('orders').find(x=>x.id===id); if(!o) return; showModal('Cập nhật đơn hàng', ordForm(o,id), ()=>saveOrd(true,id)); }
+
+function ordForm(d={}, editId=null) {
+  const customers=loadData('customers');
+  return `
+    <div class="form-row">
+      <div class="form-group">
+        <label>Khách hàng *</label>
+        <select class="form-control" id="f-customer" onchange="autoFillChannel(this.value)">
+          <option value="">-- Chọn khách hàng --</option>
+          ${customers.map(c=>`<option value="${c.id}" ${d.customerId===c.id?'selected':''}>${c.name} · ${typeBadge(c.type).replace(/<[^>]+>/g,'')} · ${c.channel}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Kênh bán hàng *</label>
+        <select class="form-control" id="f-ord-ch">
+          ${CHANNELS.map(ch=>`<option ${(d.channel||'SHOPEE')===ch?'selected':''}>${ch}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Sản phẩm *</label>
+        <select class="form-control" id="f-product">
+          <option value="">-- Chọn sản phẩm --</option>
+          <optgroup label="🩺 FIRST AID">
+            ${PRODUCTS.filter(p=>p.line==='First Aid').map(p=>`<option value="${p.code}" ${d.productCode===p.code?'selected':''}>${p.code} — ${p.name}</option>`).join('')}
+          </optgroup>
+          <optgroup label="👴 ELDERLY CARE">
+            ${PRODUCTS.filter(p=>p.line==='Elderly Care').map(p=>`<option value="${p.code}" ${d.productCode===p.code?'selected':''}>${p.code} — ${p.name}</option>`).join('')}
+          </optgroup>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Số lượng</label>
+        <input class="form-control" id="f-qty" type="number" min="1" value="${d.quantity||1}" oninput="calcTotal()">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Đơn giá (VND) *</label>
+        <input class="form-control" id="f-price" type="number" placeholder="500000" value="${d.price||''}" oninput="calcTotal()">
+      </div>
+      <div class="form-group">
+        <label>Tổng tiền</label>
+        <input class="form-control" id="f-total" readonly style="background:#F7FAFC;font-weight:700;color:var(--success)" placeholder="0₫">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Trạng thái</label>
+        <select class="form-control" id="f-ord-status">
+          ${ORDER_STATUSES.map(s=>`<option ${(d.status||'Confirmed')===s?'selected':''}>${s}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Ngày đặt</label>
+        <input class="form-control" id="f-ord-date" type="date" value="${d.orderDate||new Date().toISOString().split('T')[0]}">
+      </div>
+    </div>
+    <div class="form-row single">
+      <div class="form-group"><label>Ghi chú</label><input class="form-control" id="f-ord-note" placeholder="Yêu cầu đặc biệt..." value="${d.note||''}"></div>
+    </div>
+  `;
+}
+
+function autoFillChannel(custId) {
+  const c=loadData('customers').find(x=>x.id===custId);
+  if(c) document.getElementById('f-ord-ch').value=c.channel;
+}
+function calcTotal() {
+  const p=parseFloat(document.getElementById('f-price')?.value)||0;
+  const q=parseInt(document.getElementById('f-qty')?.value)||1;
+  const t=document.getElementById('f-total');
+  if(t) t.value=new Intl.NumberFormat('vi-VN').format(p*q)+'₫';
+}
+
+function saveOrd(isEdit, editId=null) {
+  const custId=document.getElementById('f-customer').value;
+  const prodCode=document.getElementById('f-product').value;
+  const price=parseFloat(document.getElementById('f-price').value);
+  if(!custId||!prodCode||!price){toast('Vui lòng điền đầy đủ','error');return false;}
+  const customers=loadData('customers');
+  const c=customers.find(x=>x.id===custId);
+  const p=PRODUCTS.find(x=>x.code===prodCode);
+  const qty=parseInt(document.getElementById('f-qty').value)||1;
+  const ords=loadData('orders');
+  const nd={customerId:custId,customerName:c.name,channel:document.getElementById('f-ord-ch').value,productCode:prodCode,productName:p.name,quantity:qty,price,total:price*qty,status:document.getElementById('f-ord-status').value,orderDate:document.getElementById('f-ord-date').value,note:document.getElementById('f-ord-note').value.trim()};
+  if(isEdit){const idx=ords.findIndex(o=>o.id===editId);if(idx>=0)ords[idx]={...ords[idx],...nd};saveData('orders',ords);toast('Cập nhật đơn hàng thành công!');}
+  else{const o={id:genId('ORD'),...nd};ords.push(o);saveData('orders',ords);toast(`Đã tạo ${o.id}`);}
+  closeModal();if(currentPage==='orders')refreshOrdTable();return true;
+}
+
+function confirmDelOrd(id) {
+  showConfirm('Xoá đơn hàng này?','Hành động này không thể hoàn tác.',()=>{
+    saveData('orders',loadData('orders').filter(o=>o.id!==id));
+    toast('Đã xoá đơn hàng');closeModal();refreshOrdTable();
+  });
+}
+
+// ============================================================
+// PRODUCTS
+// ============================================================
+let productLine='all';
+
+function renderProducts() {
+  const orders=loadData('orders').filter(o=>!['Cancelled','Refunded'].includes(o.status));
+  const salesByCode={};
+  orders.forEach(o=>{ salesByCode[o.productCode]=(salesByCode[o.productCode]||{qty:0,rev:0}); salesByCode[o.productCode].qty+=o.quantity; salesByCode[o.productCode].rev+=o.total; });
+  const maxRev=Math.max(...PRODUCTS.map(p=>(salesByCode[p.code]||{rev:0}).rev),1);
+
+  document.getElementById('content').innerHTML=`
+    <div style="display:flex;gap:10px;margin-bottom:20px;align-items:center">
+      <button class="btn ${productLine==='all'?'btn-primary':'btn-outline'}" onclick="setProductLine('all')">Tất cả (${PRODUCTS.length})</button>
+      <button class="btn ${productLine==='fa'?'btn-primary':'btn-outline'}" onclick="setProductLine('fa')">🩺 First Aid (${PRODUCTS.filter(p=>p.line==='First Aid').length})</button>
+      <button class="btn ${productLine==='ec'?'btn-primary':'btn-outline'}" onclick="setProductLine('ec')">👴 Elderly Care (${PRODUCTS.filter(p=>p.line==='Elderly Care').length})</button>
+      <span style="margin-left:auto;font-size:12px;color:var(--text-muted)">Tổng ${PRODUCTS.length} sản phẩm</span>
+    </div>
+
+    <div class="product-grid" id="prod-grid">
+      ${PRODUCTS.filter(p=>productLine==='all'||(productLine==='fa'&&p.line==='First Aid')||(productLine==='ec'&&p.line==='Elderly Care')).map(p=>{
+        const s=salesByCode[p.code]||{qty:0,rev:0};
+        const pct=maxRev?Math.round(s.rev/maxRev*100):0;
+        return `
+          <div class="product-card">
+            <div class="pcode">${p.code}</div>
+            <div class="pname">${p.name}</div>
+            <div class="pmeta">
+              ${lineBadge(p.line)}
+              ${p.target==='B2B'?'<span class="badge badge-b2b">B2B</span>':p.target==='B2C'?'<span class="badge badge-b2c">B2C</span>':'<span class="badge badge-b2b">B2B</span><span class="badge badge-b2c">B2C</span>'}
+            </div>
+            <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px">${p.desc}</div>
+            ${s.qty>0?`
+              <div style="margin-bottom:6px">
+                <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${p.line==='First Aid'?'#E74C3C':'#2B6CB0'}"></div></div>
+              </div>
+            `:''}
+            <div class="psales">
+              <span>📦 Đã bán: <strong>${s.qty}</strong> sp</span>
+              <span style="color:var(--success);font-weight:600">${s.rev>0?fmtMoney(s.rev):'Chưa có đơn'}</span>
+            </div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+  `;
+}
+
+function setProductLine(line) { productLine=line; renderProducts(); }
+
+// ============================================================
+// CHANNELS
+// ============================================================
+function renderChannels() {
+  const customers=loadData('customers');
+  const orders=loadData('orders');
+  const chData={};
+  CHANNELS.forEach(ch=>{chData[ch]={leads:0,b2b:0,b2c:0,orders:0,revenue:0};});
+  customers.forEach(c=>{if(chData[c.channel]){chData[c.channel].leads++;c.type==='Doanh nghiệp'?chData[c.channel].b2b++:chData[c.channel].b2c++;}});
+  orders.forEach(o=>{if(chData[o.channel]&&!['Cancelled','Refunded'].includes(o.status)){chData[o.channel].orders++;chData[o.channel].revenue+=o.total;}});
+
+  const ranked=CHANNELS.map(ch=>({ch,...chData[ch],convert:chData[ch].leads?Math.round(chData[ch].orders/chData[ch].leads*100):0,avg:chData[ch].orders?Math.round(chData[ch].revenue/chData[ch].orders):0})).sort((a,b)=>b.revenue-a.revenue);
+  const totalRev=ranked.reduce((s,r)=>s+r.revenue,0);
+  const totalOrd=ranked.reduce((s,r)=>s+r.orders,0);
+  const totalLeads=ranked.reduce((s,r)=>s+r.leads,0);
+
+  document.getElementById('content').innerHTML=`
+    <div class="kpi-grid-3">
+      <div class="kpi-card"><div class="kpi-icon" style="background:#E0F7F7">👥</div><div><h3>${totalLeads}</h3><p>Tổng leads</p></div></div>
+      <div class="kpi-card"><div class="kpi-icon" style="background:#FFF0E6">🛒</div><div><h3>${totalOrd}</h3><p>Tổng đơn hàng</p></div></div>
+      <div class="kpi-card"><div class="kpi-icon" style="background:#F0FFF4">💰</div><div><h3 style="font-size:17px">${fmtMoney(totalRev)}</h3><p>Tổng doanh thu</p></div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><h3>🏆 Bảng xếp hạng kênh bán hàng</h3></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Hạng</th><th>Kênh</th><th>Leads</th><th>B2B / B2C</th><th>Đơn</th><th>Convert</th><th>Doanh thu</th><th>Avg Order</th><th>Thị phần</th></tr></thead>
+          <tbody>
+            ${ranked.map((r,i)=>`
+              <tr>
+                <td><span class="rank-badge ${i<3?'rank-'+(i+1):'rank-n'}">${i+1}</span></td>
+                <td><div style="display:flex;align-items:center;gap:8px"><div style="width:10px;height:10px;border-radius:50%;background:${CH_COLORS[r.ch]}"></div><strong>${r.ch}</strong></div></td>
+                <td>${r.leads}</td>
+                <td><span class="badge badge-b2b" style="margin-right:4px">${r.b2b}B</span><span class="badge badge-b2c">${r.b2c}C</span></td>
+                <td>${r.orders}</td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:6px">
+                    <div class="progress-bar" style="width:60px"><div class="progress-fill" style="width:${r.convert}%;background:${r.convert>60?'var(--success)':r.convert>30?'var(--warning)':'var(--accent)'}"></div></div>
+                    <span style="font-weight:600;color:${r.convert>60?'var(--success)':r.convert>30?'var(--warning)':'var(--accent)'}">${r.convert}%</span>
+                  </div>
+                </td>
+                <td style="font-weight:700;color:var(--success)">${fmtMoney(r.revenue)}</td>
+                <td>${r.avg?fmtMoney(r.avg):'—'}</td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:6px">
+                    <div class="progress-bar" style="width:80px"><div class="progress-fill" style="width:${totalRev?Math.round(r.revenue/totalRev*100):0}%;background:${CH_COLORS[r.ch]}"></div></div>
+                    <span style="font-size:12px;font-weight:600">${totalRev?Math.round(r.revenue/totalRev*100):0}%</span>
+                  </div>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card" style="margin-bottom:0">
+        <div class="card-header"><h3>📊 Doanh thu theo kênh</h3></div>
+        <div class="card-body"><div class="chart-container" style="height:260px"><canvas id="ch-rev"></canvas></div></div>
+      </div>
+      <div class="card" style="margin-bottom:0">
+        <div class="card-header"><h3>🛒 Phân bổ đơn hàng</h3></div>
+        <div class="card-body"><div class="chart-container" style="height:260px"><canvas id="ch-ord"></canvas></div></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <div class="card-header"><h3>💡 Khuyến nghị hành động</h3></div>
+      <div class="card-body">${genRecommendations(ranked,totalRev)}</div>
+    </div>
+  `;
+
+  const actCh=ranked.filter(r=>r.revenue>0);
+  const ctx1=document.getElementById('ch-rev').getContext('2d');
+  chartInstances.rev=new Chart(ctx1,{type:'bar',data:{labels:actCh.map(r=>r.ch),datasets:[{label:'Doanh thu',data:actCh.map(r=>r.revenue),backgroundColor:actCh.map(r=>CH_COLORS[r.ch]+'BB'),borderRadius:6}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,grid:{color:'#F0F4F8'},ticks:{callback:v=>(v/1000000).toFixed(1)+'tr',font:{size:10}}},y:{grid:{display:false},ticks:{font:{size:12}}}}}});
+
+  const ctx2=document.getElementById('ch-ord').getContext('2d');
+  chartInstances.ord=new Chart(ctx2,{type:'doughnut',data:{labels:actCh.map(r=>r.ch),datasets:[{data:actCh.map(r=>r.orders),backgroundColor:actCh.map(r=>CH_COLORS[r.ch]+'CC'),borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,cutout:'55%',plugins:{legend:{position:'right',labels:{font:{size:12},boxWidth:14}}}}});
+}
+
+function genRecommendations(ranked,totalRev) {
+  const recs=[];
+  const top=ranked[0];
+  const highAvg=[...ranked].sort((a,b)=>b.avg-a.avg)[0];
+  const lowConv=ranked.filter(r=>r.leads>2).sort((a,b)=>a.convert-b.convert)[0];
+  const noOrd=ranked.filter(r=>r.leads>0&&r.orders===0);
+  const b2bCh=ranked.filter(r=>r.b2b>0).sort((a,b)=>b.b2b-a.b2b)[0];
+
+  if(top&&top.revenue>0) recs.push({icon:'🥇',color:'var(--success)',text:`<strong>${top.ch}</strong> chiếm <strong>${Math.round(top.revenue/totalRev*100)}%</strong> doanh thu → Tăng ngân sách ads và đảm bảo tồn kho đủ`});
+  if(highAvg&&highAvg.avg>0) recs.push({icon:'💎',color:'var(--primary)',text:`<strong>${highAvg.ch}</strong> có avg order cao nhất (${fmtMoney(highAvg.avg)}) → Push sản phẩm Elderly Care cao cấp lên kênh này`});
+  if(b2bCh) recs.push({icon:'🏢',color:'var(--b2b)',text:`<strong>${b2bCh.ch}</strong> có nhiều khách B2B nhất (${b2bCh.b2b} doanh nghiệp) → Ưu tiên content B2B, chính sách volume discount`});
+  if(lowConv&&lowConv.convert<40) recs.push({icon:'⚠️',color:'var(--warning)',text:`<strong>${lowConv.ch}</strong> convert thấp (${lowConv.convert}%) → Review nội dung, phản hồi comment, và quy trình follow up`});
+  if(noOrd.length>0) recs.push({icon:'🔴',color:'var(--accent)',text:`Kênh <strong>${noOrd.map(r=>r.ch).join(', ')}</strong> có lead nhưng chưa có đơn → Cần activation campaign`});
+
+  return recs.length===0?'<p style="color:var(--text-muted)">Thêm dữ liệu để nhận khuyến nghị.</p>':recs.map(r=>`<div style="display:flex;gap:12px;padding:12px;border-radius:8px;border-left:4px solid ${r.color};background:#FAFBFC;margin-bottom:10px"><span style="font-size:20px">${r.icon}</span><p style="line-height:1.5;font-size:13px">${r.text}</p></div>`).join('');
+}
+
+// ============================================================
+// REFILL REMINDER SYSTEM
+// ============================================================
+let refillCycleDays = 90;
+
+const REFILL_MSG_TEMPLATES = {
+  zalo: (c, lastProd, days) => `Chào ${c.name.split(' ').pop()}! 😊
+
+Safer+ nhận thấy đã ${days} ngày kể từ lần mua "${lastProd}" của bạn.
+
+Đây là thời điểm tốt để kiểm tra lại bộ dụng cụ y tế và bổ sung những vật tư đã dùng hết hoặc hết hạn nhé! 🩺
+
+👉 Safer+ có sẵn Bộ bổ sung / Refill Kit (SA-FA-005) — bổ sung đầy đủ các vật tư cần thiết, tiện lợi, giá hợp lý.
+
+Liên hệ ngay để được tư vấn và đặt hàng! 📞`,
+
+  facebook: (c, lastProd, days) => `Xin chào ${c.name.split(' ').pop()}! 👋
+
+Đã ${days} ngày kể từ lần mua "${lastProd}" từ Safer+ — đây là lúc tốt để kiểm tra lại tủ sơ cứu của bạn!
+
+✅ Kiểm tra những vật tư sắp hết hạn
+✅ Bổ sung băng gạc, cồn, thuốc thông thường
+✅ Đảm bảo sẵn sàng cho mọi tình huống khẩn cấp
+
+💊 Safer+ có Refill Kit đầy đủ — đặt ngay hôm nay!
+👉 Nhắn tin cho chúng tôi để biết thêm chi tiết!`,
+
+  email: (c, lastProd, days) => `Kính gửi ${c.name},
+
+Chúng tôi muốn nhắc nhở bạn rằng đã ${days} ngày kể từ lần mua "${lastProd}" tại Safer+.
+
+Theo khuyến nghị y tế, các dụng cụ sơ cứu nên được kiểm tra và bổ sung định kỳ mỗi 3–6 tháng để đảm bảo hiệu quả sử dụng khi cần thiết.
+
+Safer+ xin giới thiệu Bộ bổ sung Refill Kit (SA-FA-005) — được thiết kế để tái lập đầy đủ các vật tư trong bộ sơ cứu của bạn.
+
+Liên hệ chúng tôi qua email hoặc hotline để được hỗ trợ đặt hàng.
+
+Trân trọng,
+Đội ngũ Safer+ — Y tế Sơn Hương`
+};
+
+function addDays(dateStr, n) {
+  const d = new Date(dateStr);
+  d.setDate(d.getDate() + n);
+  return d.toISOString().split('T')[0];
+}
+
+function getRefillData(days) {
+  const customers = loadData('customers');
+  const orders = loadData('orders');
+  const refillLogs = loadData('refillLogs', []);
+  const faCodes = PRODUCTS.filter(p=>p.line==='First Aid').map(p=>p.code);
+  const deliveredStatuses = ['Completed','Hoàn thành','Shipped','Đang giao','Đã giao thành công'];
+  const result = [];
+
+  customers.forEach(c => {
+    const faOrders = orders.filter(o =>
+      o.customerId === c.id &&
+      faCodes.includes(o.productCode) &&
+      deliveredStatuses.includes(o.status)
+    );
+    if (faOrders.length === 0) return;
+    const lastOrd = faOrders.sort((a,b)=>new Date(b.orderDate)-new Date(a.orderDate))[0];
+    const daysSince = Math.floor((new Date() - new Date(lastOrd.orderDate)) / 86400000);
+    const pct = Math.min(Math.round(daysSince/days*100), 100);
+    const status = daysSince > days ? 'overdue' : daysSince > days*0.7 ? 'soon' : 'ok';
+    const refillDueDate = addDays(lastOrd.orderDate, days);
+    // Find latest refill log for this customer+order
+    const log = refillLogs.filter(l=>l.customerId===c.id && l.orderId===lastOrd.id)
+                          .sort((a,b)=>new Date(b.doneAt)-new Date(a.doneAt))[0] || null;
+    result.push({ customer:c, lastOrd, daysSince, pct, status, totalFaOrders: faOrders.length, refillDueDate, log });
+  });
+  return result.sort((a,b)=>b.daysSince-a.daysSince);
+}
+
+function renderRefill() {
+  const data = getRefillData(refillCycleDays);
+  const overdue = data.filter(r=>r.status==='overdue');
+  const soon = data.filter(r=>r.status==='soon');
+  const ok = data.filter(r=>r.status==='ok');
+  const totalFaRevenue = data.reduce((s,r)=>{
+    const ords = loadData('orders').filter(o=>o.customerId===r.customer.id&&PRODUCTS.filter(p=>p.line==='First Aid').map(p=>p.code).includes(o.productCode));
+    return s + ords.reduce((ss,o)=>ss+o.total,0);
+  }, 0);
+
+  document.getElementById('content').innerHTML = `
+    <!-- CONFIG -->
+    <div class="refill-config">
+      <span style="font-size:20px">🔔</span>
+      <label>Chu kỳ nhắc refill:</label>
+      ${[30,60,90,180].map(d=>`<button class="cycle-btn ${refillCycleDays===d?'active':''}" onclick="refillCycleDays=${d};renderRefill()">${d} ngày</button>`).join('')}
+      <span style="margin-left:auto;font-size:12px;color:var(--text-muted)">Nhắc khách First Aid bổ sung dụng cụ y tế sau mỗi <strong>${refillCycleDays}</strong> ngày</span>
+    </div>
+
+    <!-- KPI ROW -->
+    <div class="kpi-grid" style="margin-bottom:20px">
+      <div class="kpi-card">
+        <div class="kpi-icon" style="background:#FFF0F0">🔴</div>
+        <div>
+          <h3 style="color:var(--accent)">${overdue.length}</h3>
+          <p>Quá hạn refill (>${refillCycleDays} ngày)</p>
+          <div class="trend down">Cần liên hệ ngay!</div>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon" style="background:#FFFAF0">🟡</div>
+        <div>
+          <h3 style="color:var(--warning)">${soon.length}</h3>
+          <p>Sắp đến hạn (>${Math.round(refillCycleDays*0.7)} ngày)</p>
+          <div class="trend neutral">Chuẩn bị nhắc</div>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon" style="background:#F0FFF4">🟢</div>
+        <div>
+          <h3 style="color:var(--success)">${ok.length}</h3>
+          <p>Còn trong chu kỳ</p>
+          <div class="trend up">Chưa cần nhắc</div>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon" style="background:#E0F7F7">💰</div>
+        <div>
+          <h3 style="font-size:16px">${fmtMoney(totalFaRevenue)}</h3>
+          <p>Tổng DT từ khách FA</p>
+          <div class="trend up">${data.length} khách hàng</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="card">
+      <div class="card-header">
+        <h3>📋 Danh sách khách cần nhắc refill</h3>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-outline btn-sm" onclick="exportRefillList()">📥 Xuất danh sách</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Khách hàng</th><th>Loại</th><th>Kênh</th>
+              <th>Sản phẩm FA cuối</th><th>Ngày mua</th><th>Ngày cần refill</th>
+              <th>Đã qua</th><th>Trạng thái nhắc</th><th>Hành động</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${data.length===0?`<tr><td colspan="9"><div class="empty-state"><div class="emoji">🎉</div><h4>Chưa có khách hàng First Aid nào!</h4><p>Thêm đơn hàng First Aid để theo dõi refill</p></div></td></tr>`:
+            data.map(r=>{
+              const isDone = r.log !== null;
+              return `
+              <tr class="${isDone?'refill-done-row':''}">
+                <td>
+                  <div style="font-weight:600">${r.customer.name}</div>
+                  <div style="font-size:11px;color:var(--text-muted)">${r.customer.phone}</div>
+                  ${r.customer.province?`<div style="font-size:11px;color:var(--text-muted)">📍 ${r.customer.province}</div>`:''}
+                </td>
+                <td>${typeBadge(r.customer.type)}</td>
+                <td>${channelBadge(r.customer.channel)}</td>
+                <td>
+                  <div style="font-size:12px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.lastOrd.productName}</div>
+                  <div style="font-size:11px;color:var(--text-muted)">${r.lastOrd.productCode}</div>
+                </td>
+                <td style="font-size:12px;white-space:nowrap">${fmtDate(r.lastOrd.orderDate)}</td>
+                <td style="font-size:12px;white-space:nowrap">
+                  <div style="font-weight:600;color:${r.status==='overdue'?'var(--accent)':r.status==='soon'?'var(--warning)':'var(--success)'}">${fmtDate(r.refillDueDate)}</div>
+                </td>
+                <td>
+                  <div style="margin-bottom:4px">
+                    <div class="progress-bar" style="height:6px">
+                      <div class="progress-fill" style="width:${r.pct}%;background:${r.status==='overdue'?'var(--accent)':r.status==='soon'?'var(--warning)':'var(--success)'}"></div>
+                    </div>
+                  </div>
+                  <span class="urgency-${r.status}" style="font-size:12px;white-space:nowrap">
+                    ${r.status==='overdue'?'🔴':r.status==='soon'?'🟡':'🟢'} ${r.daysSince} ngày
+                  </span>
+                </td>
+                <td>
+                  ${isDone
+                    ? `<span class="badge badge-refill-done">✅ Đã refill</span>
+                       <div style="font-size:11px;color:var(--text-muted);margin-top:3px">${fmtDate(r.log.doneAt)}</div>
+                       ${r.log.note?`<div style="font-size:11px;color:var(--text-muted);font-style:italic;margin-top:2px">${r.log.note}</div>`:''}`
+                    : `<span class="badge ${r.status==='overdue'?'badge-refill-pending':r.status==='soon'?'badge-refill-soon':'badge-lead'}">${r.status==='overdue'?'⏰ Quá hạn':r.status==='soon'?'🔔 Sắp đến hạn':'⏳ Chưa đến hạn'}</span>`
+                  }
+                </td>
+                <td>
+                  <div style="display:flex;flex-direction:column;gap:4px">
+                    <button class="btn btn-sm ${r.status==='overdue'?'btn-danger':r.status==='soon'?'btn-primary':'btn-outline'}" onclick="openRefillMsg('${r.customer.id}','${r.lastOrd.productName.replace(/'/g,"\\'")}',${r.daysSince})">
+                      💬 Tạo tin
+                    </button>
+                    ${isDone
+                      ? `<button class="btn btn-sm btn-outline" style="color:var(--text-muted);font-size:11px" onclick="undoRefillDone('${r.customer.id}','${r.lastOrd.id}')">↩ Bỏ ghi nhận</button>`
+                      : `<button class="btn btn-sm" style="background:#F0FFF4;color:#22543D;border:1px solid #C6F6D5" onclick="openMarkRefillDoneModal('${r.customer.id}','${r.lastOrd.id}','${r.lastOrd.productName.replace(/'/g,"\\'")}')">✅ Đã refill</button>`
+                    }
+                  </div>
+                </td>
+              </tr>
+            `}).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+let _refillMsgChannel = 'zalo';
+
+function openRefillMsg(custId, lastProd, days) {
+  const c = loadData('customers').find(x=>x.id===custId);
+  if(!c) return;
+  _refillMsgChannel = c.channel==='ZALO'?'zalo':c.channel==='FACEBOOK'?'facebook':'email';
+
+  function buildBody() {
+    const tmpl = REFILL_MSG_TEMPLATES[_refillMsgChannel];
+    return tmpl(c, lastProd, days);
+  }
+
+  const body = `
+    <div style="margin-bottom:16px;padding:12px;background:#F7FAFC;border-radius:8px;display:flex;gap:12px;align-items:flex-start">
+      <span style="font-size:24px">👤</span>
+      <div>
+        <div style="font-weight:600">${c.name}</div>
+        <div style="font-size:12px;color:var(--text-muted)">📞 ${c.phone} · ${channelBadge(c.channel)} · ${c.province?'📍 '+c.province:''}</div>
+        <div style="font-size:12px;margin-top:4px">🩺 ${lastProd} · Đã mua ${days} ngày trước</div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:12px">
+      <label style="font-size:12px;font-weight:600;color:var(--text-muted);display:block;margin-bottom:8px">Chọn kênh gửi tin:</label>
+      <div class="channel-tabs">
+        <button class="ch-tab ${_refillMsgChannel==='zalo'?'active':''}" onclick="switchRefillCh('zalo','${custId}','${lastProd.replace(/'/g,"\\'")}',${days})">💬 Zalo</button>
+        <button class="ch-tab ${_refillMsgChannel==='facebook'?'active':''}" onclick="switchRefillCh('facebook','${custId}','${lastProd.replace(/'/g,"\\'")}',${days})">📘 Facebook</button>
+        <button class="ch-tab ${_refillMsgChannel==='email'?'active':''}" onclick="switchRefillCh('email','${custId}','${lastProd.replace(/'/g,"\\'")}',${days})">📧 Email</button>
+      </div>
+    </div>
+
+    <div>
+      <label style="font-size:12px;font-weight:600;color:var(--text-muted);display:block;margin-bottom:6px">Nội dung tin nhắn:</label>
+      <textarea class="refill-msg-box" id="refill-msg-text">${buildBody()}</textarea>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button class="btn btn-outline btn-sm" onclick="const t=document.getElementById('refill-msg-text');t.select();document.execCommand('copy');toast('Đã copy tin nhắn!')">📋 Copy</button>
+      <span style="font-size:11px;color:var(--text-muted);align-self:center">→ Dán vào ${_refillMsgChannel==='zalo'?'Zalo':_refillMsgChannel==='facebook'?'Facebook Messenger':'Email'} để gửi cho khách</span>
+    </div>
+  `;
+
+  window._refillMsgState = {custId, lastProd, days};
+  showModal(`💬 Tạo tin nhắn nhắc refill — ${c.name}`, body, null);
+  // Hide save button
+  setTimeout(()=>{
+    const footer = document.querySelector('.modal-footer');
+    if(footer) footer.innerHTML = `<button class="btn btn-outline" onclick="closeModal()">Đóng</button>`;
+  }, 50);
+}
+
+function switchRefillCh(ch, custId, lastProd, days) {
+  _refillMsgChannel = ch;
+  const c = loadData('customers').find(x=>x.id===custId);
+  if(!c) return;
+  document.querySelectorAll('.ch-tab').forEach(b=>b.classList.remove('active'));
+  event.target.classList.add('active');
+  const tmpl = REFILL_MSG_TEMPLATES[ch];
+  const el = document.getElementById('refill-msg-text');
+  if(el) el.value = tmpl(c, lastProd, days);
+}
+
+function exportRefillList() {
+  const data = getRefillData(refillCycleDays);
+  const rows = ['Tên,SĐT,Loại,Kênh,Tỉnh,Sản phẩm FA cuối,Ngày mua cuối,Ngày cần refill,Số ngày đã qua,Trạng thái,Đã refill,Ngày refill,Ghi chú'];
+  data.forEach(r=>{
+    rows.push([
+      r.customer.name, r.customer.phone, r.customer.type, r.customer.channel,
+      r.customer.province||'', r.lastOrd.productName, r.lastOrd.orderDate,
+      r.refillDueDate, r.daysSince,
+      r.status==='overdue'?'Quá hạn':r.status==='soon'?'Sắp đến hạn':'Còn tốt',
+      r.log?'Đã refill':'Chưa refill', r.log?r.log.doneAt:'', r.log?r.log.note:''
+    ].map(v=>`"${v}"`).join(','));
+  });
+  const blob = new Blob(['﻿'+rows.join('\n')],{type:'text/csv;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href=url; a.download='refill-reminder.csv'; a.click();
+  toast('Đã xuất danh sách refill!');
+}
+
+function openMarkRefillDoneModal(custId, ordId, productName) {
+  const c = loadData('customers').find(x=>x.id===custId);
+  if(!c) return;
+  const today = new Date().toISOString().split('T')[0];
+  const body = `
+    <div style="background:#F0FFF4;border:1px solid #C6F6D5;border-radius:8px;padding:12px 14px;margin-bottom:16px;display:flex;align-items:flex-start;gap:10px">
+      <span style="font-size:22px">✅</span>
+      <div>
+        <div style="font-weight:600;color:#22543D">${c.name}</div>
+        <div style="font-size:12px;color:#276749;margin-top:2px">📞 ${c.phone} · 🩺 ${productName}</div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Ngày đã refill *</label>
+        <input type="date" id="rdone-date" class="form-control" value="${today}" max="${today}">
+      </div>
+    </div>
+    <div class="form-row single">
+      <div class="form-group">
+        <label>Ghi chú (tuỳ chọn)</label>
+        <input type="text" id="rdone-note" class="form-control" placeholder="VD: Khách đặt thêm SA-FA-005, giao tháng sau...">
+      </div>
+    </div>
+  `;
+  showModal('✅ Ghi nhận đã refill', body, () => {
+    const doneAt = document.getElementById('rdone-date').value;
+    const note = document.getElementById('rdone-note').value.trim();
+    if(!doneAt) { toast('Vui lòng chọn ngày', 'error'); return; }
+    const logs = loadData('refillLogs', []);
+    logs.push({ id: Date.now().toString(), customerId: custId, orderId: ordId, doneAt, note });
+    saveData('refillLogs', logs);
+    closeModal();
+    toast(`Đã ghi nhận refill cho ${c.name}!`);
+    renderRefill();
+  });
+}
+
+function undoRefillDone(custId, ordId) {
+  const logs = loadData('refillLogs', []);
+  const updated = logs.filter(l=>!(l.customerId===custId && l.orderId===ordId));
+  saveData('refillLogs', updated);
+  toast('Đã bỏ ghi nhận refill');
+  renderRefill();
+}
+
+// ============================================================
+// MODAL
+// ============================================================
+function showModal(title, body, onSave) {
+  document.getElementById('modal-container').innerHTML=`
+    <div class="modal-overlay" id="mo">
+      <div class="modal">
+        <div class="modal-header"><h3>${title}</h3><button class="close-btn" onclick="closeModal()">✕</button></div>
+        <div class="modal-body">${body}</div>
+        <div class="modal-footer">
+          <button class="btn btn-outline" onclick="closeModal()">Huỷ</button>
+          <button class="btn btn-primary" onclick="window._ms&&window._ms()">✓ Lưu</button>
+        </div>
+      </div>
+    </div>
+  `;
+  window._ms=onSave;
+  document.getElementById('mo').addEventListener('click',e=>{if(e.target.id==='mo')closeModal();});
+  setTimeout(calcTotal,50);
+}
+
+function showConfirm(title, msg, onOk) {
+  document.getElementById('modal-container').innerHTML=`
+    <div class="modal-overlay" id="mo">
+      <div class="modal confirm-dialog">
+        <div class="modal-body">
+          <div class="confirm-icon">⚠️</div>
+          <h4>${title}</h4><p style="color:var(--text-muted);margin-top:6px;font-size:13px">${msg}</p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline" onclick="closeModal()">Huỷ</button>
+          <button class="btn btn-danger" onclick="window._ca&&window._ca()">Xoá</button>
+        </div>
+      </div>
+    </div>
+  `;
+  window._ca=onOk;
+}
+
+function closeModal() { document.getElementById('modal-container').innerHTML=''; window._ms=null; window._ca=null; }
+
+// ============================================================
+// ROUTER
+// ============================================================
+function renderPage(p) { ({dashboard:renderDashboard,customers:renderCustomers,orders:renderOrders,products:renderProducts,channels:renderChannels,refill:renderRefill}[p]||renderDashboard)(); }
+
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded',()=>{
+  seedData();
+  document.getElementById('topbar-date').textContent=new Date().toLocaleDateString('vi-VN',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  renderDashboard();
+});
+</script>
+</body>
+</html>
